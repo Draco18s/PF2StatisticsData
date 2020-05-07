@@ -1,0 +1,8 @@
+﻿public enum MTEML {
+	EXTREME,
+	HIGH,
+	MODERATE,
+	LOW,
+	TERRIBLE,
+	NONE,
+}

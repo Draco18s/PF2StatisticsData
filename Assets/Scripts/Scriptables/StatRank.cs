@@ -1,0 +1,3 @@
+﻿public enum StatRank {
+	KEY,SECONDARY,TERTIARY,NICE,DUMP
+}

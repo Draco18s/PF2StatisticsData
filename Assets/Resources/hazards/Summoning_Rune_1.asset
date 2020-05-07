@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4149affd7546514597e412786420610, type: 3}
+  m_Name: Summoning_Rune_1
+  m_EditorClassIdentifier: 
+  name: Summoning Rune
+  level: 1
+  stealth: 4
+  disable: 1
+  canBeAttacked: 0
+  armorClass: 0
+  fortSave: 0
+  refxSave: 0
+  isComplex: 1
+  usesAttack: 0
+  usesSavingThrow: 0
+  saveClass: 0
+  canAffectsSaves: 0

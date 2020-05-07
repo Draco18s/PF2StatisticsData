@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 103b5c95877788a4f9a03245b668ea29, type: 3}
+  m_Name: Giant_Bat_2
+  m_EditorClassIdentifier: 
+  name: Giant Bat
+  level: 2
+  weight: 1
+  attacks: 2
+  attacksAreSpells: 0
+  armorClass: 1
+  abilitySaveDC: 5
+  canAffectsSaves: 0
+  perception: 1
+  fort: 2
+  refx: 2
+  will: 2
+  stealth: 1
