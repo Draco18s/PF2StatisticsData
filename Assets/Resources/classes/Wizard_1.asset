@@ -10,30 +10,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb8dbce0926de0f44b1fdd4215006a4f, type: 3}
-  m_Name: Fighter_15
+  m_Name: Wizard_1
   m_EditorClassIdentifier: 
-  name: Fighter
-  level: 15
-  attacks: 4
-  attackStat: 0
+  name: Wizard
+  level: 1
+  attacks: 2
+  attackStat: 3
   armorClass: 2
-  shieldBonus: 2
-  armorType: 1
+  shieldBonus: 0
+  armorType: 0
   classSpellDC: 2
-  canAffectsSaves: 1
+  canAffectsSaves: -1
   classStat: 0
-  perception: 6
+  perception: 2
   firstSkillIncrease: 3
-  fort: 4
+  fort: 2
   fortSaveBoost: 0
-  refx: 4
-  refxSaveBoost: 4
-  will: 2
+  refx: 2
+  refxSaveBoost: 0
+  will: 4
   willSaveBoost: 0
   stats:
-    STR: 0
-    DEX: 1
-    CON: 2
-    INT: 4
-    WIS: 3
+    STR: 4
+    DEX: 2
+    CON: 3
+    INT: 0
+    WIS: 1
     CHA: 4

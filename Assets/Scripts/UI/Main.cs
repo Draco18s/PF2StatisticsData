@@ -12,7 +12,7 @@ public class Main : MonoBehaviour
 	public Dropdown[] dropdowns;
 	public GameObject[] resultWindow;
 	public GradientAsset gradient;
-	public BreakdownBar legend;
+	public GameObject legend;
 	private int diffSetting;
 	public static Main instance;
 	public GameObject tooltip;
@@ -34,22 +34,19 @@ public class Main : MonoBehaviour
 					ClearWindow(resultWindow[j]);
 					return;
 				}
-				Test(allChar[v-1], resultWindow[j]);
+				if(Test(allChar[v-1], resultWindow[j])) {
+					dd.SetValueWithoutNotify(0);
+					ClearWindow(resultWindow[j]);
+				}
 			});
 		}
 		diffDropdown.onValueChanged.AddListener(v => {
 			diffSetting = v;
 		});
-		Color[] cols = new Color[20];
-		for(int i = 0; i < 20; i++) {
-			float v = i / 20f;
-			cols[i] = gradient.gradient.Evaluate(v);
-		}
-		legend.SetBitColors(cols);
-		legend.transform.parent.Find("Hover").GetComponent<Image>().AddHover(p => {
+		legend.transform.Find("Hover").GetComponent<Image>().AddHover(p => {
 			ShowTooltip(legend.transform.position+new Vector3(-50,-100,0), "Indicates an approximate result of making a roll against challenges of the indicated difficulty as an average between all possible outcomes (nat-1 to nat-20).\nE.g. if only two results are possible (fail or success) then the average will be a blend between the two (yellow).", 4, 1, false);
 		});
-		legend.transform.parent.Find("Hover2").GetComponent<Image>().AddHover(p => {
+		legend.transform.Find("Hover2").GetComponent<Image>().AddHover(p => {
 			ShowTooltip(legend.transform.position + new Vector3(-50, -100, 0), "Black: Critical Failure\nRed: Failure\nGreen: Success\nBlue: Critical Success\nBlend: Some mixture.", 4, 1, false);
 		});
 	}
@@ -81,17 +78,18 @@ public class Main : MonoBehaviour
 		bar.SetBitColors(cols);
 	}
 
-	private void Test(Character character, GameObject window) {
+	private bool Test(Character character, GameObject window) {
 		Monster[] allMons = Resources.LoadAll<Monster>("specific_monsters");
 		Hazard[] allHaz = Resources.LoadAll<Hazard>("hazards");
 		int minLv, maxLv;
 		GetDifficultyLevel(character.level, diffSetting, out minLv, out maxLv);
-		if(maxLv < -5) return;
+		if(maxLv < -5) return true;
 		StatisticsResults result = ComputeStatistics(character, allMons, minLv, maxLv);
 		result = ComputeStatistics(character, allHaz, minLv, maxLv, result);
 		CalcStatsForSkills(character, result);
 		window.transform.Find("ClassLevel").GetComponent<Text>().text = character.name + " " + character.level + " (" + diffDropdown.options[diffSetting].text + ")";
 		DisplayResult(result, window);
+		return false;
 	}
 
 	private void GetDifficultyLevel(int level, int diffSetting, out int minLv, out int maxLv) {

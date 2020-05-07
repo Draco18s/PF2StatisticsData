@@ -33,8 +33,8 @@ public class CharacterEditor : Editor
 		EditorGUILayout.LabelField((10 + 2 * StatArray.GetValue(c.stats.WIS, c.level)).ToString());
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField("CON");
-		EditorGUILayout.LabelField((10 + 2 * StatArray.GetValue(c.stats.CON, c.level)).ToString());
+		EditorGUILayout.LabelField("CHA");
+		EditorGUILayout.LabelField((10 + 2 * StatArray.GetValue(c.stats.CHA, c.level)).ToString());
 		EditorGUILayout.EndHorizontal();
 	}
 }
