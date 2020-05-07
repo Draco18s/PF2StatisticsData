@@ -16,7 +16,7 @@ public class Hazard : ScriptableObject {
 	public bool isComplex;
 	public bool usesAttack;
 	public bool usesSavingThrow;
-	public MTEML saveClass;
+	public MTEML effectDifficultyClass;
 	public AffectType canAffectsSaves;
 
 	public static int GetAttack(int level, bool isComplex) {

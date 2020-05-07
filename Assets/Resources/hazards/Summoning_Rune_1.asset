@@ -23,5 +23,5 @@ MonoBehaviour:
   isComplex: 1
   usesAttack: 0
   usesSavingThrow: 0
-  saveClass: 0
+  effectDifficultyClass: 0
   canAffectsSaves: 0

@@ -808,7 +808,7 @@ public class Main : MonoBehaviour
 		if(haz.usesSavingThrow) {
 			if(haz.canAffectsSaves.HasFlag(AffectType.FORT)) {
 				sve = Character.GetStatValue(chr, chr.fort, StatAttr.CON);
-				sdc = Hazard.GetSaveDC(haz.saveClass, haz.level);
+				sdc = Hazard.GetSaveDC(haz.effectDifficultyClass, haz.level);
 				result.forttot++;
 				for(int i = 1; i <= 20; i++) {
 					if(i == 1) {
@@ -865,7 +865,7 @@ public class Main : MonoBehaviour
 			}
 			if(haz.canAffectsSaves.HasFlag(AffectType.REFX)) {
 				sve = Character.GetStatValue(chr, chr.refx, StatAttr.DEX);
-				sdc = Hazard.GetSaveDC(haz.saveClass, haz.level);
+				sdc = Hazard.GetSaveDC(haz.effectDifficultyClass, haz.level);
 				result.refxtot++;
 				for(int i = 1; i <= 20; i++) {
 					if(i == 1) {
@@ -922,7 +922,7 @@ public class Main : MonoBehaviour
 			}
 			if(haz.canAffectsSaves.HasFlag(AffectType.WILL)) {
 				sve = Character.GetStatValue(chr, chr.will, StatAttr.WIS);
-				sdc = Hazard.GetSaveDC(haz.saveClass, haz.level);
+				sdc = Hazard.GetSaveDC(haz.effectDifficultyClass, haz.level);
 				result.willtot++;
 				for(int i = 1; i <= 20; i++) {
 					if(i == 1) {
