@@ -19,6 +19,8 @@ Unity uses a YAML format for asset files, it is not recommended to edit these di
 
 Clone the repo, open in Unity 2019, open the Assets/Resources/ folder and right-click on either the monster, classes, or hazard folders and navigate to Create -> Pathfinder -> Character, Monster, or Hazard
 
+When done, push to your clone, and create a pull request back to mine. Try not to PR the ProjectVersion.txt or other non-asset files, but not a huge deal.
+
 ![Create menu](./docs/menu.png "Create menu")
 
 Name the asset and then start editing it in the inspector.
