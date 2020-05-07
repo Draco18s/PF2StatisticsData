@@ -11,16 +11,21 @@ How to use:
      - Black is a critical failure, blue is critical success, etc.
 	 - Blended values indicate multiple possible outcomes (eg. critically hitting a LOW armor monster but only succeeding against a HIGH armor monster).
 	 - The more green and blue the better
+	 - Grey bar means that no challenges in the selected difficulty set tested that attribute
 
 ## Contributing monster, hazard, and class data
 
 Unity uses a YAML format for asset files, it is not recommended to edit these directly as the contextual information will be missing.
 
 Clone the repo, open in Unity 2019, open the Assets/Resources/ folder and right-click on either the monster, classes, or hazard folders and navigate to Create -> Pathfinder -> Character, Monster, or Hazard
+
 ![Create menu](./docs/menu.png "Create menu")
+
 Name the asset and then start editing it in the inspector.
 Naming convention is the name of the class, monster, or hazard using underscores, then its level. So "Fighter_15" is a 15th level fighter.
+
 ![Unity inspector](./docs/inspector.png "Unity inspector")
+
 I haven't done a lot of work to make the inspector look nice and have a good layout, opting for functional with the limited time I had available.
 Fields:
  - Name: The name of the thing. For monsters and hazards this isn't used.
