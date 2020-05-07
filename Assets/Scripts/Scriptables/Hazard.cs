@@ -5,7 +5,7 @@ using UnityEngine;
 
 [CreateAssetMenu(fileName = "Hazard", menuName = "Pathfinder2/Hazard", order = 1)]
 public class Hazard : ScriptableObject {
-	public string name;
+	new public string name;
 	public int level;
 	public MTEML stealth;
 	public MTEML disable;

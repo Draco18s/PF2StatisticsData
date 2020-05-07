@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Monster_Type", menuName = "Pathfinder2/Monster", order = 1)]
 public class Monster : ScriptableObject
 {
-	public string name;
+	new public string name;
 	public int level;
 	public float weight;
 	public MTEML attacks;

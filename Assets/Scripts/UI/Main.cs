@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.draco18s.ui;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,8 +14,11 @@ public class Main : MonoBehaviour
 	public GradientAsset gradient;
 	public BreakdownBar legend;
 	private int diffSetting;
+	public static Main instance;
+	public GameObject tooltip;
 
-    void Start() {
+	void Start() {
+		instance = this;
 		Character[] allChar = Resources.LoadAll<Character>("classes");
 		for(int i = 0; i < dropdowns.Length; i++) {
 			int j = i;
@@ -42,6 +46,12 @@ public class Main : MonoBehaviour
 			cols[i] = gradient.gradient.Evaluate(v);
 		}
 		legend.SetBitColors(cols);
+		legend.transform.parent.Find("Hover").GetComponent<Image>().AddHover(p => {
+			ShowTooltip(legend.transform.position+new Vector3(-50,-100,0), "Indicates an approximate result of making a roll against challenges of the indicated difficulty as an average between all possible outcomes (nat-1 to nat-20).\nE.g. if only two results are possible (fail or success) then the average will be a blend between the two (yellow).", 4, 1, false);
+		});
+		legend.transform.parent.Find("Hover2").GetComponent<Image>().AddHover(p => {
+			ShowTooltip(legend.transform.position + new Vector3(-50, -100, 0), "Black: Critical Failure\nRed: Failure\nGreen: Success\nBlue: Critical Success\nBlend: Some mixture.", 4, 1, false);
+		});
 	}
 
 	private void ClearWindow(GameObject window) {
@@ -1099,5 +1109,87 @@ public class Main : MonoBehaviour
 					result.skillDabbler[i - 1] += (int)RollResult.FAIL;
 			}
 		}
+	}
+	public static void HideTooltip() {
+		instance.tooltip.SetActive(false);
+	}
+
+	public static void ShowTooltip(Vector3 p, string v) {
+		ShowTooltip(p, v, 1);
+	}
+	public static void ShowTooltip(Vector3 pos, string v, float ratio) {
+		ShowTooltip(pos, v, ratio, 1);
+	}
+	public static void ShowTooltip(Vector3 pos, string v, float ratio, float scale) {
+		ShowTooltip(pos, v, ratio, scale, true);
+	}
+	public static void ShowTooltip(Vector3 pos, string v, float ratio, float scale, bool allowMoveDown) {
+		if(v.Length == 0) return;
+
+		instance.tooltip.SetActive(true);
+		((RectTransform)instance.tooltip.transform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 160);
+		((RectTransform)instance.tooltip.transform).SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 64);
+		instance.tooltip.transform.position = pos;
+		Text textArea = instance.tooltip.transform.Find("Text").GetComponent<Text>();
+		textArea.text = v;
+		//width + 7.5
+		//height + 6
+		bool fits = false;
+		if(textArea.preferredWidth < 610) {
+			((RectTransform)textArea.transform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, textArea.preferredWidth);
+			((RectTransform)textArea.transform).SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, textArea.preferredHeight);
+			((RectTransform)instance.tooltip.transform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (textArea.preferredWidth / 2) + 22);
+			((RectTransform)instance.tooltip.transform).SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (textArea.preferredHeight / 2) + 16);
+			fits = true;
+		}
+		/*if(t.preferredHeight < 232) {
+			((RectTransform)instance.tooltip.transform).SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (t.preferredHeight / 4) + 7.5f);
+			fits = true;
+		}*/
+		float w = 64;// t.preferredWidth;
+		if(!fits) {
+			float ph = 4;
+			float h = 68;
+			float r = 1;
+			do {
+				r = (h * ratio) / w;
+				w += 64;// * Mathf.CeilToInt(r);
+				((RectTransform)textArea.transform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, w);
+				ph = h;
+				h = textArea.preferredHeight;
+			} while(h * ratio > w);
+			if(h == ph) {
+				w = textArea.preferredWidth + 22;
+				//w -= 32 * Mathf.CeilToInt(r);
+				((RectTransform)textArea.transform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, w);
+			}
+
+			((RectTransform)textArea.transform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, w);
+			((RectTransform)textArea.transform).SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, h);
+			h = textArea.preferredHeight;
+			((RectTransform)instance.tooltip.transform).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (w / 2) + 8);
+			((RectTransform)instance.tooltip.transform).SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, (h / 2) + 15f);
+		}
+		float wid = ((RectTransform)instance.tooltip.transform).rect.width;
+		float hig = ((RectTransform)instance.tooltip.transform).rect.height;
+		if(instance.tooltip.transform.position.x + wid * scale > Screen.width) {
+			if(allowMoveDown) {
+				//shift the tooltip down. No check for off-screen
+				if(instance.tooltip.transform.position.y - hig * 1.5f < 35) {
+					instance.tooltip.transform.position = new Vector3(Screen.width - 5 - wid, instance.tooltip.transform.position.y + ((RectTransform)instance.tooltip.transform).rect.height, 0);
+				}
+				else {
+					instance.tooltip.transform.position = new Vector3(Screen.width - 5 - wid, instance.tooltip.transform.position.y - ((RectTransform)instance.tooltip.transform).rect.height, 0);
+				}
+			}
+			else {
+				//instance.tooltip.transform.position += new Vector3(wid * scale / 2, 0, 0);
+				instance.tooltip.transform.position = new Vector3(Screen.width - 5 - wid, instance.tooltip.transform.position.y, 0);
+			}
+		}
+		else {
+			instance.tooltip.transform.position += new Vector3(0, 0, 0);
+		}
+		instance.tooltip.transform.localScale = new Vector3(scale, scale, scale);
 	}
 }

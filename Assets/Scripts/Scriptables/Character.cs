@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Character_Class", menuName = "Pathfinder2/Character", order = 1)]
 public class Character : ScriptableObject
 {
-	public string name;
+	new public string name;
 	public int level;
 	public TEML attacks;
 	public StatAttr attackStat;
