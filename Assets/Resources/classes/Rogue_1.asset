@@ -10,31 +10,31 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb8dbce0926de0f44b1fdd4215006a4f, type: 3}
-  m_Name: Fighter_1
+  m_Name: Rogue_1
   m_EditorClassIdentifier: 
-  name: Fighter
+  name: Rogue
   level: 1
-  attacks: 4
-  attackStat: 0
+  attacks: 2
+  attackStat: 1
   armorClass: 2
-  shieldBonus: 2
+  shieldBonus: 0
   armorType: 1
   classSpellDC: 2
   alchemistUseItemDC: 0
   canAffectsSaves: 0
   classStat: 0
   perception: 4
-  firstSkillIncrease: 3
-  fort: 4
+  firstSkillIncrease: 2
+  fort: 2
   fortSaveBoost: 0
   refx: 4
   refxSaveBoost: 0
-  will: 2
+  will: 4
   willSaveBoost: 0
   stats:
-    STR: 0
-    DEX: 1
+    STR: 4
+    DEX: 0
     CON: 2
-    INT: 4
-    WIS: 3
-    CHA: 4
+    INT: 3
+    WIS: 1
+    CHA: 3

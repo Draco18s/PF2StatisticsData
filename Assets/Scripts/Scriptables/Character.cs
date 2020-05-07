@@ -14,6 +14,7 @@ public class Character : ScriptableObject
 	public int shieldBonus;
 	public ArmorType armorType;
 	public TEML classSpellDC;
+	public bool alchemistUseItemDC;
 	public AffectType canAffectsSaves;
 	public StatAttr classStat;
 	public TEML perception;
@@ -48,15 +49,15 @@ public class Character : ScriptableObject
 				break;
 			case ArmorType.LIGHT:
 				dex = Mathf.Min(dex, 4);
-				armorAC = Mathf.Max(5 - dex,0);
+				armorAC = Mathf.Max(Mathf.Max(5 - dex,0),2);
 				break;
 			case ArmorType.MEDIUM:
 				dex = Mathf.Min(dex, 2);
-				armorAC = Mathf.Max(5 - dex, 0);
+				armorAC = Mathf.Max(Mathf.Max(5 - dex, 0),4);
 				break;
 			case ArmorType.HEAVY:
 				dex = Mathf.Min(dex, 0);
-				armorAC = Mathf.Max(6 - dex, 0);
+				armorAC = Mathf.Max(Mathf.Max(6 - dex, 0),6);
 				break;
 		}
 		return baseAC + armorAC + dex;

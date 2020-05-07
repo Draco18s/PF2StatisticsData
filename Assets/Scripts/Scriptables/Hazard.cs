@@ -21,9 +21,9 @@ public class Hazard : ScriptableObject {
 
 	public static int GetAttack(int level, bool isComplex) {
 		if(isComplex) {
-			return 8 + (level / 2);
+			return 8 + level + (level / 2);
 		}
-		return 11+((level+1)/2);
+		return 11 + level + ((level+1)/2);
 	}
 
 	public static int GetArmorClass(MTEML teml, int level) {
@@ -88,5 +88,23 @@ public class Hazard : ScriptableObject {
 				return 7 + level + ((level - 1) / 3);
 		}
 		return 0;
+	}
+
+	public MTEML GetAttribute(MStatAttr stat) {
+		switch(stat) {
+			case MStatAttr.AC:
+				return armorClass;
+			case MStatAttr.ABILITY_DC:
+				return effectDifficultyClass;
+			case MStatAttr.STEALTH:
+				return stealth;
+			case MStatAttr.FORT:
+				return fortSave;
+			case MStatAttr.REFX:
+				return refxSave;
+			case MStatAttr.DISABLE:
+				return disable;
+		}
+		return MTEML.TERRIBLE;
 	}
 }

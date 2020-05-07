@@ -10,31 +10,31 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb8dbce0926de0f44b1fdd4215006a4f, type: 3}
-  m_Name: Fighter_1
+  m_Name: Champion_1
   m_EditorClassIdentifier: 
-  name: Fighter
+  name: Champion
   level: 1
-  attacks: 4
+  attacks: 2
   attackStat: 0
   armorClass: 2
   shieldBonus: 2
-  armorType: 1
+  armorType: 3
   classSpellDC: 2
   alchemistUseItemDC: 0
-  canAffectsSaves: 0
+  canAffectsSaves: 5
   classStat: 0
-  perception: 4
-  firstSkillIncrease: 3
+  perception: 2
+  firstSkillIncrease: 0
   fort: 4
   fortSaveBoost: 0
-  refx: 4
+  refx: 2
   refxSaveBoost: 0
-  will: 2
+  will: 4
   willSaveBoost: 0
   stats:
     STR: 0
-    DEX: 1
+    DEX: 3
     CON: 2
     INT: 4
     WIS: 3
-    CHA: 4
+    CHA: 1

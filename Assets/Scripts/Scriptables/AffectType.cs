@@ -5,5 +5,6 @@ public enum AffectType {
 	NONE=0,
 	FORT=1<<0,
 	REFX=1<<1,
-	WILL=1<<2
+	WILL=1<<2,
+	FORT_LIVING=1<<3,
 }

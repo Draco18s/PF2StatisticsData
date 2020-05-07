@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Editor\CharacterEditor.cs" />
+    <Compile Include="Assets\Scripts\Editor\HazardEditor.cs" />
     <Compile Include="Assets\Scripts\Editor\MonsterEditor.cs" />
     <Reference Include="UnityEditor.TestRunner">
       <HintPath>C:/Users/Major/Documents/GitHub/PF2Data/Library/ScriptAssemblies/UnityEditor.TestRunner.dll</HintPath>

@@ -401,8 +401,16 @@ public class Main : MonoBehaviour
 		}
 		int sdc;
 		int sve;
-		sdc = Character.GetStatValue(chr, chr.classSpellDC, chr.classStat) + 10;
-		if(chr.canAffectsSaves.HasFlag(AffectType.FORT)) {
+		if(chr.alchemistUseItemDC) {
+			if(chr.level < 8)
+				sdc = 17 + chr.level + (chr.level / 3);
+			else
+				sdc = Math.Max(Character.GetStatValue(chr, chr.classSpellDC, chr.classStat) + 10, 17 + chr.level + (chr.level / 3));
+		}
+		else {
+			sdc = Character.GetStatValue(chr, chr.classSpellDC, chr.classStat) + 10;
+		}
+		if(chr.canAffectsSaves.HasFlag(AffectType.FORT) || chr.canAffectsSaves.HasFlag(AffectType.FORT_LIVING)) {
 			result.spellDCtot++;
 			sve = Monster.GetSavingThrow(mon.fort, mon.level);
 			for(int i = 1; i <= 20; i++) {
@@ -516,7 +524,7 @@ public class Main : MonoBehaviour
 				}
 			}
 		}
-		if(mon.canAffectsSaves.HasFlag(AffectType.FORT)) {
+		if(mon.canAffectsSaves.HasFlag(AffectType.FORT) || mon.canAffectsSaves.HasFlag(AffectType.FORT_LIVING)) {
 			sve = Character.GetStatValue(chr, chr.fort, StatAttr.CON);
 			sdc = Monster.GetAbilityDC(mon.abilitySaveDC, mon.level);
 			result.forttot++;
@@ -770,7 +778,15 @@ public class Main : MonoBehaviour
 		int def;
 		int sve;
 		int sdc;
-		sdc = Character.GetStatValue(chr, chr.classSpellDC, chr.classStat) + 10;
+		if(chr.alchemistUseItemDC) {
+			if(chr.level < 8)
+				sdc = 17 + chr.level + (chr.level / 3);
+			else
+				sdc = Math.Max(Character.GetStatValue(chr, chr.classSpellDC, chr.classStat) + 10, 17 + chr.level + (chr.level / 3));
+		}
+		else {
+			sdc = Character.GetStatValue(chr, chr.classSpellDC, chr.classStat) + 10;
+		}
 		if(haz.canBeAttacked) {
 			off = Character.GetStatValue(chr, chr.attacks, chr.attackStat);
 			def = Hazard.GetArmorClass(haz.armorClass, haz.level);
@@ -840,7 +856,7 @@ public class Main : MonoBehaviour
 			}
 		}
 		if(haz.usesSavingThrow) {
-			if(haz.canAffectsSaves.HasFlag(AffectType.FORT)) {
+			if(haz.canAffectsSaves.HasFlag(AffectType.FORT) || haz.canAffectsSaves.HasFlag(AffectType.FORT_LIVING)) {
 				sve = Character.GetStatValue(chr, chr.fort, StatAttr.CON);
 				sdc = Hazard.GetSaveDC(haz.effectDifficultyClass, haz.level);
 				result.forttot++;
