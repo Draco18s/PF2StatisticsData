@@ -86,7 +86,7 @@ public class Main : MonoBehaviour
 		if(maxLv < -5) return true;
 		StatisticsResults result = ComputeStatistics(character, allMons, minLv, maxLv);
 		result = ComputeStatistics(character, allHaz, minLv, maxLv, result);
-		CalcStatsForSkills(character, result);
+		CalcStatsForSkills(character, minLv, maxLv, result);
 		window.transform.Find("ClassLevel").GetComponent<Text>().text = character.name + " " + character.level + " (" + diffDropdown.options[diffSetting].text + ")";
 		DisplayResult(result, window);
 		return false;
@@ -143,8 +143,13 @@ public class Main : MonoBehaviour
 		BreakdownBar bar = window.transform.Find("Attack").GetComponentInChildren<BreakdownBar>();
 		Color[] cols = new Color[20];
 		for(int i = 0; i < 20; i++) {
-			float v = (result.attack[i] / 3f) / result.attacktot;
-			cols[i] = gradient.gradient.Evaluate(v);
+			if(result.attacktot > 0) {
+				float v = (result.attack[i] / 3f) / result.attacktot;
+				cols[i] = gradient.gradient.Evaluate(v);
+			}
+			else {
+				cols[i] = new Color(.5f, .5f, .5f, 1);
+			}
 		}
 		bar.SetBitColors(cols);
 		bar = window.transform.Find("Abilities").GetComponentInChildren<BreakdownBar>();
@@ -198,36 +203,61 @@ public class Main : MonoBehaviour
 		bar = window.transform.Find("Armor").GetComponentInChildren<BreakdownBar>();
 		cols = new Color[20];
 		for(int i = 0; i < 20; i++) {
-			float v = (result.armorClass[i] / 3f) / result.armortot;
-			cols[i] = gradient.gradient.Evaluate(1-v);
+			if(result.armortot > 0) {
+				float v = (result.armorClass[i] / 3f) / result.armortot;
+				cols[i] = gradient.gradient.Evaluate(1 - v);
+			}
+			else {
+				cols[i] = new Color(.5f, .5f, .5f, 1);
+			}
 		}
 		bar.SetBitColors(cols);
 		bar = window.transform.Find("Perception").GetComponentInChildren<BreakdownBar>();
 		cols = new Color[20];
 		for(int i = 0; i < 20; i++) {
-			float v = (result.perception[i] / 3f) / (result.perceptiontot+1);
-			cols[i] = gradient.gradient.Evaluate(v);
+			if(result.perceptiontot > 0) {
+				float v = (result.perception[i] / 3f) / (result.perceptiontot);
+				cols[i] = gradient.gradient.Evaluate(v);
+			}
+			else {
+				cols[i] = new Color(.5f, .5f, .5f, 1);
+			}
 		}
 		bar.SetBitColors(cols);
 		bar = window.transform.Find("Skill1").GetComponentInChildren<BreakdownBar>();
 		cols = new Color[20];
 		for(int i = 0; i < 20; i++) {
-			float v = (result.skillSpecialist[i] / 3f) / (result.totSkills +1);
-			cols[i] = gradient.gradient.Evaluate(v);
+			if(result.totSkills > 0) {
+				float v = (result.skillSpecialist[i] / 3f) / (result.totSkills);
+				cols[i] = gradient.gradient.Evaluate(v);
+			}
+			else {
+				cols[i] = new Color(.5f, .5f, .5f, 1);
+			}
 		}
 		bar.SetBitColors(cols);
 		bar = window.transform.Find("Skill2").GetComponentInChildren<BreakdownBar>();
 		cols = new Color[20];
 		for(int i = 0; i < 20; i++) {
-			float v = (result.skillDecent[i] / 3f) / (result.totSkills + 1);
-			cols[i] = gradient.gradient.Evaluate(v);
+			if(result.totSkills > 0) {
+				float v = (result.skillDecent[i] / 3f) / (result.totSkills);
+				cols[i] = gradient.gradient.Evaluate(v);
+			}
+			else {
+				cols[i] = new Color(.5f, .5f, .5f, 1);
+			}
 		}
 		bar.SetBitColors(cols);
 		bar = window.transform.Find("Skill3").GetComponentInChildren<BreakdownBar>();
 		cols = new Color[20];
 		for(int i = 0; i < 20; i++) {
-			float v = (result.skillDabbler[i] / 3f) / (result.totSkills + 1);
-			cols[i] = gradient.gradient.Evaluate(v);
+			if(result.totSkills > 0) {
+				float v = (result.skillDabbler[i] / 3f) / (result.totSkills);
+				cols[i] = gradient.gradient.Evaluate(v);
+			}
+			else {
+				cols[i] = new Color(.5f, .5f, .5f, 1);
+			}
 		}
 		bar.SetBitColors(cols);
 	}
@@ -249,71 +279,75 @@ public class Main : MonoBehaviour
 		return result;
 	}
 
-	private static void CalcStatsForSkills(Character chr, StatisticsResults result) {
+	private static void CalcStatsForSkills(Character chr, int minLv, int maxLv, StatisticsResults result) {
 		int skil = Character.GetStatValue(chr, chr.perception, StatAttr.WIS);
-		int diff = 14 + chr.level + (chr.level / 3);
-		for(int i = 1; i <= 20; i++) {
-			if(skil + i >= diff) {
-				result.perception[i - 1] += (int)RollResult.SUCCESS;
-			}
-			else {
-				result.perception[i - 1] += (int)RollResult.FAIL;
-			}
-		}
-		TEML maxTeml = GetBestTeml(chr,chr.level);
-		skil = Character.GetStatValue(chr, maxTeml, chr.classStat);
-		diff = 14 + chr.level + (chr.level / 3);
-		for(int i = 1; i <= 20; i++) {
-			if(skil + i >= diff || i == 20) {
-				if(skil + i >= diff + 10 || i == 20) {
-					result.skillSpecialist[i - 1] += (int)RollResult.CRIT_SUCCESS;
+		for(int level = minLv; level <= maxLv; level++) {
+			result.totSkills++;
+			result.perceptiontot++;
+			int diff = 14 + level + (level / 3);
+			for(int i = 1; i <= 20; i++) {
+				if(skil + i >= diff) {
+					result.perception[i - 1] += (int)RollResult.SUCCESS;
 				}
-				else
-					result.skillSpecialist[i - 1] += (int)RollResult.SUCCESS;
-			}
-			else {
-				if(skil + i < diff - 10 || i == 1) {
-					result.skillSpecialist[i - 1] += (int)RollResult.CRIT_FAIL;
+				else {
+					result.perception[i - 1] += (int)RollResult.FAIL;
 				}
-				else
-					result.skillSpecialist[i - 1] += (int)RollResult.FAIL;
 			}
-		}
-		maxTeml = GetBestTeml(chr, chr.level-7);
-		skil = Character.GetStatValue(chr, maxTeml, Character.GetSecondaryStat(chr, StatRank.SECONDARY));
-		diff = 14 + chr.level + (chr.level / 3);
-		for(int i = 1; i <= 20; i++) {
-			if(skil + i >= diff || i == 20) {
-				if(skil + i >= diff + 10 || i == 20) {
-					result.skillDecent[i - 1] += (int)RollResult.CRIT_SUCCESS;
+			TEML maxTeml = GetBestTeml(chr, chr.level);
+			skil = Character.GetStatValue(chr, maxTeml, chr.classStat);
+			diff = 14 + level + (level / 3);
+			for(int i = 1; i <= 20; i++) {
+				if(skil + i >= diff || i == 20) {
+					if(skil + i >= diff + 10 || i == 20) {
+						result.skillSpecialist[i - 1] += (int)RollResult.CRIT_SUCCESS;
+					}
+					else
+						result.skillSpecialist[i - 1] += (int)RollResult.SUCCESS;
 				}
-				else
-					result.skillDecent[i - 1] += (int)RollResult.SUCCESS;
+				else {
+					if(skil + i < diff - 10 || i == 1) {
+						result.skillSpecialist[i - 1] += (int)RollResult.CRIT_FAIL;
+					}
+					else
+						result.skillSpecialist[i - 1] += (int)RollResult.FAIL;
+				}
 			}
-			else {
-				if(skil + i < diff - 10 || i == 1) {
-					result.skillDecent[i - 1] += (int)RollResult.CRIT_FAIL;
+			maxTeml = GetBestTeml(chr, chr.level - 7);
+			skil = Character.GetStatValue(chr, maxTeml, Character.GetSecondaryStat(chr, StatRank.SECONDARY));
+			diff = 14 + level + (level / 3);
+			for(int i = 1; i <= 20; i++) {
+				if(skil + i >= diff || i == 20) {
+					if(skil + i >= diff + 10 || i == 20) {
+						result.skillDecent[i - 1] += (int)RollResult.CRIT_SUCCESS;
+					}
+					else
+						result.skillDecent[i - 1] += (int)RollResult.SUCCESS;
 				}
-				else
-					result.skillDecent[i - 1] += (int)RollResult.FAIL;
+				else {
+					if(skil + i < diff - 10 || i == 1) {
+						result.skillDecent[i - 1] += (int)RollResult.CRIT_FAIL;
+					}
+					else
+						result.skillDecent[i - 1] += (int)RollResult.FAIL;
+				}
 			}
-		}
-		skil = Character.GetStatValue(chr, TEML.TRAINED, Character.GetSecondaryStat(chr, StatRank.NICE));
-		diff = 14 + chr.level + (chr.level / 3);
-		for(int i = 1; i <= 20; i++) {
-			if(skil + i >= diff || i == 20) {
-				if(skil + i >= diff+ 10 || i == 20) {
-					result.skillDabbler[i - 1] += (int)RollResult.CRIT_SUCCESS;
+			skil = Character.GetStatValue(chr, TEML.TRAINED, Character.GetSecondaryStat(chr, StatRank.NICE));
+			diff = 14 + level + (level / 3);
+			for(int i = 1; i <= 20; i++) {
+				if(skil + i >= diff || i == 20) {
+					if(skil + i >= diff + 10 || i == 20) {
+						result.skillDabbler[i - 1] += (int)RollResult.CRIT_SUCCESS;
+					}
+					else
+						result.skillDabbler[i - 1] += (int)RollResult.SUCCESS;
 				}
-				else
-					result.skillDabbler[i - 1] += (int)RollResult.SUCCESS;
-			}
-			else {
-				if(skil + i < diff - 10 || i == 1) {
-					result.skillDabbler[i - 1] += (int)RollResult.CRIT_FAIL;
+				else {
+					if(skil + i < diff - 10 || i == 1) {
+						result.skillDabbler[i - 1] += (int)RollResult.CRIT_FAIL;
+					}
+					else
+						result.skillDabbler[i - 1] += (int)RollResult.FAIL;
 				}
-				else
-					result.skillDabbler[i - 1] += (int)RollResult.FAIL;
 			}
 		}
 	}

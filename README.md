@@ -50,6 +50,6 @@ Fields:
  - Can be disabled: [hazard only] If the hazard doesn't have a disable DC, leave this unchecked.
  - Is complex: [hazard only] If the hazard is a complex hazard (exact numerical values differ between simple and complex traps).
  - Uses Attack/Uses Saving Throw: [hazard only] What kind of offensive ability the trap has. Summoning Rune uses neither, Poisoned Lock uses both.
- - Attacks are spells: [monster only] Used for spellcasters. Spellcaster monsters' attack rolls vs. AC use their casting stat (derived from their Ability DC).
+ - Attacks are spells: [monster only] Used for spellcasters. Spellcaster monsters' attack rolls vs. AC use their casting stat (normally derived from their Ability DC).
  - Ability Save DC: [monster only] If abilities do not have a saving throw, this value is ignored, but set it to `NONE` anyway.
  

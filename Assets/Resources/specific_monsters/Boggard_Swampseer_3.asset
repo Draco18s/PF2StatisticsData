@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 103b5c95877788a4f9a03245b668ea29, type: 3}
-  m_Name: Deugar_Sharpshooter_0
+  m_Name: Boggard_Swampseer_3
   m_EditorClassIdentifier: 
-  name: Deugar Sharpshooter
-  level: 0
+  name: Boggard Swampseer
+  level: 3
   weight: 1
   attacks: 2
   attacksAreSpells: 0
-  armorClass: 1
-  abilitySaveDC: 5
-  canAffectsSaves: 0
-  perception: 3
+  armorClass: 0
+  abilitySaveDC: 1
+  canAffectsSaves: -1
+  perception: 1
   fort: 2
-  refx: 2
-  will: 3
-  stealth: 2
+  refx: 3
+  will: 1
+  stealth: 5

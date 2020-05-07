@@ -21,7 +21,7 @@ MonoBehaviour:
   armorType: 0
   classSpellDC: 2
   canAffectsSaves: -1
-  classStat: 0
+  classStat: 3
   perception: 2
   firstSkillIncrease: 3
   fort: 2
