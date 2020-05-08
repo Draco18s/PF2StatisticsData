@@ -10,31 +10,31 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb8dbce0926de0f44b1fdd4215006a4f, type: 3}
-  m_Name: Alchemist_1
+  m_Name: Druid_1
   m_EditorClassIdentifier: 
-  name: Alchemist
+  name: Druid
   level: 1
   attacks: 2
   attackStat: 0
   armorClass: 2
   shieldBonus: 0
-  armorType: 1
+  armorType: 2
   classSpellDC: 2
-  alchemistUseItemDC: 1
-  canAffectsSaves: 8
-  classStat: 3
+  alchemistUseItemDC: 0
+  canAffectsSaves: 7
+  classStat: 4
   perception: 2
   firstSkillIncrease: 3
-  fort: 4
+  fort: 2
   fortSaveBoost: 0
-  refx: 4
+  refx: 2
   refxSaveBoost: 0
-  will: 2
+  will: 4
   willSaveBoost: 0
   stats:
-    STR: 4
+    STR: 1
     DEX: 2
     CON: 3
-    INT: 0
-    WIS: 1
+    INT: 4
+    WIS: 0
     CHA: 4

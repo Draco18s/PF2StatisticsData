@@ -72,4 +72,18 @@ public class Character : ScriptableObject
 		if(chr.stats.CHA == rank) return StatAttr.CHA;
 		return chr.classStat;
 	}
+
+	public static StatAttr GetSecondaryStat(Character chr, StatRank rank, StatAttr not) {
+		if(chr.stats.STR == rank && not != StatAttr.STR) return StatAttr.STR;
+		if(chr.stats.DEX == rank && not != StatAttr.DEX) return StatAttr.DEX;
+		if(chr.stats.CON == rank && not != StatAttr.CON) return StatAttr.CON;
+		if(chr.stats.INT == rank && not != StatAttr.INT) return StatAttr.INT;
+		if(chr.stats.WIS == rank && not != StatAttr.WIS) return StatAttr.WIS;
+		if(chr.stats.CHA == rank && not != StatAttr.CHA) return StatAttr.CHA;
+		return StatAttr.STR; //this will always fail at the caller
+	}
+
+	internal static int GetStatValue(Character chr, TEML maxTeml, object skillStat) {
+		throw new NotImplementedException();
+	}
 }

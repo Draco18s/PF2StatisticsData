@@ -294,7 +294,8 @@ public class Main : MonoBehaviour
 				}
 			}
 			TEML maxTeml = GetBestTeml(chr, chr.level);
-			skil = Character.GetStatValue(chr, maxTeml, chr.classStat);
+			StatAttr skillStat = (chr.classStat != StatAttr.CON && level < maxLv ? chr.classStat : GetBestSkillStat(chr, 0));
+			skil = Character.GetStatValue(chr, maxTeml, skillStat);
 			diff = 14 + level + (level / 3);
 			for(int i = 1; i <= 20; i++) {
 				if(skil + i >= diff || i == 20) {
@@ -313,7 +314,8 @@ public class Main : MonoBehaviour
 				}
 			}
 			maxTeml = GetBestTeml(chr, chr.level - 7);
-			skil = Character.GetStatValue(chr, maxTeml, Character.GetSecondaryStat(chr, StatRank.SECONDARY));
+			skillStat = GetBestSkillStat(chr, 1);
+			skil = Character.GetStatValue(chr, maxTeml, skillStat);
 			diff = 14 + level + (level / 3);
 			for(int i = 1; i <= 20; i++) {
 				if(skil + i >= diff || i == 20) {
@@ -331,7 +333,8 @@ public class Main : MonoBehaviour
 						result.skillDecent[i - 1] += (int)RollResult.FAIL;
 				}
 			}
-			skil = Character.GetStatValue(chr, TEML.TRAINED, Character.GetSecondaryStat(chr, StatRank.NICE));
+			skillStat = GetBestSkillStat(chr, 3);
+			skil = Character.GetStatValue(chr, maxTeml, skillStat);
 			diff = 14 + level + (level / 3);
 			for(int i = 1; i <= 20; i++) {
 				if(skil + i >= diff || i == 20) {
@@ -350,6 +353,26 @@ public class Main : MonoBehaviour
 				}
 			}
 		}
+	}
+
+	private static StatAttr GetBestSkillStat(Character chr, int n) {
+		StatRank rank = (StatRank)n;
+		StatAttr sec = Character.GetSecondaryStat(chr, rank);
+		if(sec != StatAttr.STR && sec != StatAttr.CON) {
+			return sec;
+		}
+		rank = (rank + 1 <= StatRank.NICE ? rank + 1: rank);
+		sec = Character.GetSecondaryStat(chr, rank, sec);
+		if(sec != StatAttr.STR && sec != StatAttr.CON) {
+			return sec;
+		}
+		rank = (rank + 1 <= StatRank.DUMP ? rank + 1 : rank);
+		sec = Character.GetSecondaryStat(chr, rank, sec);
+		if(sec != StatAttr.STR && sec != StatAttr.CON) {
+			return sec;
+		}
+		rank = (rank + 1 <= StatRank.DUMP ? rank + 1 : rank);
+		return Character.GetSecondaryStat(chr, rank, sec);
 	}
 
 	private static TEML GetBestTeml(Character chr, int level) {
@@ -1105,7 +1128,8 @@ public class Main : MonoBehaviour
 			}
 		}
 		result.totSkills++;
-		off = Character.GetSkillValue(chr, GetBestTeml(chr, chr.level), Character.GetSecondaryStat(chr, StatRank.SECONDARY));
+		StatAttr skillStat = GetBestSkillStat(chr, 0);
+		off = Character.GetSkillValue(chr, GetBestTeml(chr, chr.level), skillStat);
 		def = Hazard.GetSkillDC(haz.disable, haz.level);
 		for(int i = 1; i <= 20; i++) {
 			if(off + i >= def || i == 20) {
@@ -1123,7 +1147,8 @@ public class Main : MonoBehaviour
 					result.skillSpecialist[i - 1] += (int)RollResult.FAIL;
 			}
 		}
-		off = Character.GetSkillValue(chr, GetBestTeml(chr, chr.level - 7), Character.GetSecondaryStat(chr, StatRank.TERTIARY));
+		skillStat = GetBestSkillStat(chr, 1);
+		off = Character.GetSkillValue(chr, GetBestTeml(chr, chr.level - 7), skillStat);
 		for(int i = 1; i <= 20; i++) {
 			if(off + i >= def || i == 20) {
 				if(off + i >= def + 10 || i == 20) {
@@ -1140,7 +1165,8 @@ public class Main : MonoBehaviour
 					result.skillDecent[i - 1] += (int)RollResult.FAIL;
 			}
 		}
-		off = Character.GetSkillValue(chr, TEML.TRAINED, Character.GetSecondaryStat(chr, StatRank.NICE));
+		skillStat = GetBestSkillStat(chr, 3);
+		off = Character.GetSkillValue(chr, TEML.TRAINED, skillStat);
 		for(int i = 1; i <= 20; i++) {
 			if(off + i >= def || i == 20) {
 				if(off + i >= def + 10 || i == 20) {

@@ -17,12 +17,12 @@ MonoBehaviour:
   attacks: 2
   attackStat: 1
   armorClass: 2
-  shieldBonus: 0
+  shieldBonus: 1
   armorType: 1
   classSpellDC: 2
   alchemistUseItemDC: 0
   canAffectsSaves: 0
-  classStat: 0
+  classStat: 1
   perception: 4
   firstSkillIncrease: 2
   fort: 2

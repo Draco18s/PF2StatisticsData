@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4149affd7546514597e412786420610, type: 3}
   m_Name: Spear_Launcher_2
   m_EditorClassIdentifier: 
-  name: 
-  level: 0
+  name: Spear Launcher
+  level: 2
   stealth: 0
-  disable: 0
-  canBeAttacked: 0
-  armorClass: 0
-  fortSave: 0
-  refxSave: 0
+  disable: 1
+  canBeAttacked: 1
+  armorClass: 1
+  fortSave: 1
+  refxSave: 4
   isComplex: 0
-  usesAttack: 0
+  usesAttack: 1
   usesSavingThrow: 0
-  effectDifficultyClass: 0
+  effectDifficultyClass: 5
   canAffectsSaves: 0

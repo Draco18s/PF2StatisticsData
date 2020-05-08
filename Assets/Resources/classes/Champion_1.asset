@@ -24,7 +24,7 @@ MonoBehaviour:
   canAffectsSaves: 5
   classStat: 0
   perception: 2
-  firstSkillIncrease: 0
+  firstSkillIncrease: 3
   fort: 4
   fortSaveBoost: 0
   refx: 2

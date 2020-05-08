@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4149affd7546514597e412786420610, type: 3}
   m_Name: Electric_Latch_Rune_3
   m_EditorClassIdentifier: 
-  name: 
-  level: 0
-  stealth: 0
-  disable: 0
+  name: Electric Latch Rune
+  level: 3
+  stealth: 1
+  disable: 1
   canBeAttacked: 0
-  armorClass: 0
-  fortSave: 0
-  refxSave: 0
+  armorClass: 5
+  fortSave: 5
+  refxSave: 5
   isComplex: 0
   usesAttack: 0
-  usesSavingThrow: 0
+  usesSavingThrow: 1
   effectDifficultyClass: 0
-  canAffectsSaves: 0
+  canAffectsSaves: 2
