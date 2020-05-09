@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Drowning Pit
   level: 3
-  stealth: 0
-  disable: 0
+  stealth: 5
+  disable: 1
   canBeAttacked: 1
-  armorClass: 1
-  fortSave: 2
-  refxSave: 3
+  armorClass: 2
+  fortSave: 3
+  refxSave: 4
   isComplex: 1
   usesAttack: 0
   usesSavingThrow: 0
-  effectDifficultyClass: 5
+  effectDifficultyClass: 7
   canAffectsSaves: 0

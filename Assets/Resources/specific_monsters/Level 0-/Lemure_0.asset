@@ -9,19 +9,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4149affd7546514597e412786420610, type: 3}
-  m_Name: Summoning_Rune_1
+  m_Script: {fileID: 11500000, guid: 103b5c95877788a4f9a03245b668ea29, type: 3}
+  m_Name: Lemure_0
   m_EditorClassIdentifier: 
-  name: Summoning Rune
-  level: 1
-  stealth: 4
-  disable: 1
-  canBeAttacked: 0
-  armorClass: 6
-  fortSave: 6
-  refxSave: 6
-  isComplex: 1
-  usesAttack: 0
-  usesSavingThrow: 0
-  effectDifficultyClass: 0
+  name: Lemure
+  level: 0
+  weight: 1
+  attacks: 2
+  attacksAreSpells: 0
+  armorClass: 4
+  abilitySaveDC: 5
   canAffectsSaves: 0
+  perception: 5
+  fort: 1
+  refx: 3
+  will: 4
+  stealth: 7

@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4149affd7546514597e412786420610, type: 3}
-  m_Name: Electric_Latch_Rune_3
+  m_Name: Vorpal_Executioner_19
   m_EditorClassIdentifier: 
-  name: Electric Latch Rune
-  level: 3
-  stealth: 2
-  disable: 2
-  canBeAttacked: 0
-  armorClass: 7
-  fortSave: 7
-  refxSave: 7
-  isComplex: 0
-  usesAttack: 0
+  name: Vorpal Executioner
+  level: 15
+  stealth: 3
+  disable: 3
+  canBeAttacked: 1
+  armorClass: 2
+  fortSave: 3
+  refxSave: 3
+  isComplex: 1
+  usesAttack: 1
   usesSavingThrow: 1
-  effectDifficultyClass: 1
-  canAffectsSaves: 2
+  effectDifficultyClass: 3
+  canAffectsSaves: 1

@@ -67,6 +67,8 @@
     <Compile Include="Assets\Scripts\Scriptables\Character.cs" />
     <Compile Include="Assets\Scripts\Scriptables\GradientAsset.cs" />
     <Compile Include="Assets\Scripts\Scriptables\Hazard.cs" />
+    <Compile Include="Assets\Scripts\Scriptables\ItemBonusMode.cs" />
+    <Compile Include="Assets\Scripts\Scriptables\ItemBonusType.cs" />
     <Compile Include="Assets\Scripts\Scriptables\MStatAttr.cs" />
     <Compile Include="Assets\Scripts\Scriptables\MTEML.cs" />
     <Compile Include="Assets\Scripts\Scriptables\Monster.cs" />

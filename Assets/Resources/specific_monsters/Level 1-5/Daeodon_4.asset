@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 103b5c95877788a4f9a03245b668ea29, type: 3}
-  m_Name: Lemure_0
+  m_Name: Daeodon_4
   m_EditorClassIdentifier: 
-  name: Lemure
-  level: 0
+  name: Daeodon
+  level: 4
   weight: 1
   attacks: 2
   attacksAreSpells: 0
-  armorClass: 3
-  abilitySaveDC: 5
-  canAffectsSaves: 0
-  perception: 4
-  fort: 0
-  refx: 2
+  armorClass: 2
+  abilitySaveDC: 3
+  canAffectsSaves: 2
+  perception: 3
+  fort: 2
+  refx: 4
   will: 3
-  stealth: 5
+  stealth: 2

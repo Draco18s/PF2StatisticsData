@@ -10,31 +10,31 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb8dbce0926de0f44b1fdd4215006a4f, type: 3}
-  m_Name: Sorcerer_1
+  m_Name: Alchemist_10
   m_EditorClassIdentifier: 
-  name: Sorcerer
-  level: 1
-  attacks: 2
-  attackStat: 5
+  name: Alchemist
+  level: 10
+  attacks: 4
+  attackStat: 1
   armorClass: 2
   shieldBonus: 0
-  armorType: 0
-  classSpellDC: 2
-  alchemistUseItemDC: 0
-  canAffectsSaves: 7
-  classStat: 5
-  perception: 2
+  armorType: 1
+  classSpellDC: 4
+  alchemistUseItemDC: 1
+  canAffectsSaves: 8
+  classStat: 3
+  perception: 4
   firstSkillIncrease: 3
-  fort: 2
+  fort: 4
   fortSaveBoost: 0
-  refx: 2
+  refx: 4
   refxSaveBoost: 0
   will: 4
   willSaveBoost: 0
   stats:
     STR: 4
-    DEX: 1
+    DEX: 2
     CON: 3
-    INT: 4
-    WIS: 2
-    CHA: 0
+    INT: 0
+    WIS: 1
+    CHA: 4

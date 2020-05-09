@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Poisoned Lock
   level: 1
-  stealth: 1
-  disable: 1
+  stealth: 2
+  disable: 2
   canBeAttacked: 1
-  armorClass: 1
-  fortSave: 2
-  refxSave: 3
+  armorClass: 2
+  fortSave: 3
+  refxSave: 4
   isComplex: 0
   usesAttack: 1
   usesSavingThrow: 1
-  effectDifficultyClass: 0
+  effectDifficultyClass: 1
   canAffectsSaves: 1

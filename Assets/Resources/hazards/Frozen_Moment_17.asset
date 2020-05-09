@@ -9,19 +9,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 103b5c95877788a4f9a03245b668ea29, type: 3}
-  m_Name: Electric_Eel_1
+  m_Script: {fileID: 11500000, guid: f4149affd7546514597e412786420610, type: 3}
+  m_Name: Frozen_Moment_17
   m_EditorClassIdentifier: 
-  name: Electric Eel
-  level: 1
-  weight: 1
-  attacks: 3
-  attacksAreSpells: 0
-  armorClass: 1
-  abilitySaveDC: 1
+  name: Frozen Moment
+  level: 17
+  stealth: 2
+  disable: 2
+  canBeAttacked: 0
+  armorClass: 6
+  fortSave: 6
+  refxSave: 6
+  isComplex: 0
+  usesAttack: 0
+  usesSavingThrow: 1
+  effectDifficultyClass: 1
   canAffectsSaves: 1
-  perception: 3
-  fort: 2
-  refx: 2
-  will: 3
-  stealth: 1

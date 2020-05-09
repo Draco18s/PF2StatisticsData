@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,24 +10,35 @@ public class Main : MonoBehaviour
 {
 	// Start is called before the first frame update
 	public Dropdown diffDropdown;
+	public Dropdown levelDropdown;
 	public Dropdown[] dropdowns;
 	public GameObject[] resultWindow;
 	public GradientAsset gradient;
 	public GameObject legend;
 	private int diffSetting;
+	private int levelSetting;
 	public static Main instance;
 	public GameObject tooltip;
+	public ItemBonusMode itemBonusMode = ItemBonusMode.ITEM;
+	private Character[] allChar;
 
 	void Start() {
 		instance = this;
-		Character[] allChar = Resources.LoadAll<Character>("classes");
+		allChar = Resources.LoadAll<Character>("classes");
+		List<int> availLevels = new List<int>();
+		List<Dropdown.OptionData> opts;
 		for(int i = 0; i < dropdowns.Length; i++) {
 			int j = i;
 			Dropdown dd = dropdowns[i];
-			List<Dropdown.OptionData> opts = new List<Dropdown.OptionData>();
+			opts = new List<Dropdown.OptionData>();
 			foreach(Character c in allChar) {
-				Dropdown.OptionData opt = new Dropdown.OptionData(c.name + " " + c.level);
-				opts.Add(opt);
+				if(!opts.Any(ooo => ooo.text == c.name)) {
+					Dropdown.OptionData opt = new Dropdown.OptionData(c.name);
+					opts.Add(opt);
+				}
+				if(!availLevels.Contains(c.level)) {
+					availLevels.Add(c.level);
+				}
 			}
 			dd.AddOptions(opts);
 			dd.onValueChanged.AddListener(v => {
@@ -34,12 +46,22 @@ public class Main : MonoBehaviour
 					ClearWindow(resultWindow[j]);
 					return;
 				}
-				if(Test(allChar[v-1], resultWindow[j])) {
+				if(Test(GetCharacter(dd.options[v].text, levelSetting), resultWindow[j])) {
 					dd.SetValueWithoutNotify(0);
 					ClearWindow(resultWindow[j]);
 				}
 			});
 		}
+		opts = new List<Dropdown.OptionData>();
+		foreach(int lv in availLevels) {
+			opts.Add(new Dropdown.OptionData(lv.ToString()));
+		}
+		levelDropdown.AddOptions(opts);
+		levelDropdown.onValueChanged.AddListener(v => {
+			int ll = 0;
+			int.TryParse(levelDropdown.options[v].text, out ll);
+			levelSetting = ll;
+		});
 		diffDropdown.onValueChanged.AddListener(v => {
 			diffSetting = v;
 		});
@@ -51,7 +73,12 @@ public class Main : MonoBehaviour
 		});
 	}
 
+	private Character GetCharacter(string className, int levelSetting) {
+		return allChar.FirstOrDefault(chr => chr.name == className && chr.level == levelSetting);
+	}
+
 	private void ClearWindow(GameObject window) {
+		window.transform.Find("ClassLevel").GetComponent<Text>().text = "";
 		Color[] cols = new Color[20];
 		for(int i = 0; i < 20; i++) {
 			cols[i] = Color.white;
@@ -79,14 +106,15 @@ public class Main : MonoBehaviour
 	}
 
 	private bool Test(Character character, GameObject window) {
+		if(character == null) return true;
 		Monster[] allMons = Resources.LoadAll<Monster>("specific_monsters");
 		Hazard[] allHaz = Resources.LoadAll<Hazard>("hazards");
 		int minLv, maxLv;
 		GetDifficultyLevel(character.level, diffSetting, out minLv, out maxLv);
 		if(maxLv < -5) return true;
-		StatisticsResults result = ComputeStatistics(character, allMons, minLv, maxLv);
-		result = ComputeStatistics(character, allHaz, minLv, maxLv, result);
-		CalcStatsForSkills(character, minLv, maxLv, result);
+		StatisticsResults result = ComputeStatistics(character, allMons, minLv, maxLv, itemBonusMode);
+		result = ComputeStatistics(character, allHaz, minLv, maxLv, result, itemBonusMode);
+		CalcStatsForSkills(character, minLv, maxLv, result, itemBonusMode);
 		window.transform.Find("ClassLevel").GetComponent<Text>().text = character.name + " " + character.level + " (" + diffDropdown.options[diffSetting].text + ")";
 		DisplayResult(result, window);
 		return false;
@@ -262,25 +290,25 @@ public class Main : MonoBehaviour
 		bar.SetBitColors(cols);
 	}
 
-	public static StatisticsResults ComputeStatistics(Character character, Monster[] allMons, int minlvl, int maxlvl) {
+	public static StatisticsResults ComputeStatistics(Character character, Monster[] allMons, int minlvl, int maxlvl, ItemBonusMode mode) {
 		StatisticsResults result = new StatisticsResults();
 		foreach(Monster m in allMons) {
 			if(m.level >= minlvl && m.level <= maxlvl)
-				CalcStatsForPair(character, m, result);
+				CalcStatsForPair(character, m, result, mode);
 		}
 		return result;
 	}
 
-	public StatisticsResults ComputeStatistics(Character character, Hazard[] allHaz, int minlvl, int maxlvl, StatisticsResults result) {
+	public StatisticsResults ComputeStatistics(Character character, Hazard[] allHaz, int minlvl, int maxlvl, StatisticsResults result, ItemBonusMode mode) {
 		foreach(Hazard m in allHaz) {
 			if(m.level >= minlvl && m.level <= maxlvl)
-				CalcStatsForPair(character, m, result);
+				CalcStatsForPair(character, m, result, mode);
 		}
 		return result;
 	}
 
-	private static void CalcStatsForSkills(Character chr, int minLv, int maxLv, StatisticsResults result) {
-		int skil = Character.GetStatValue(chr, chr.perception, StatAttr.WIS);
+	private static void CalcStatsForSkills(Character chr, int minLv, int maxLv, StatisticsResults result, ItemBonusMode mode) {
+		int skil = Character.GetStatValue(chr, chr.perception, StatAttr.WIS, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.PERCEPTION);
 		for(int level = minLv; level <= maxLv; level++) {
 			result.totSkills++;
 			result.perceptiontot++;
@@ -295,7 +323,7 @@ public class Main : MonoBehaviour
 			}
 			TEML maxTeml = GetBestTeml(chr, chr.level);
 			StatAttr skillStat = (chr.classStat != StatAttr.CON && level < maxLv ? chr.classStat : GetBestSkillStat(chr, 0));
-			skil = Character.GetStatValue(chr, maxTeml, skillStat);
+			skil = Character.GetStatValue(chr, maxTeml, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_BEST);
 			diff = 14 + level + (level / 3);
 			for(int i = 1; i <= 20; i++) {
 				if(skil + i >= diff || i == 20) {
@@ -315,7 +343,7 @@ public class Main : MonoBehaviour
 			}
 			maxTeml = GetBestTeml(chr, chr.level - 7);
 			skillStat = GetBestSkillStat(chr, 1);
-			skil = Character.GetStatValue(chr, maxTeml, skillStat);
+			skil = Character.GetStatValue(chr, maxTeml, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_DECENT);
 			diff = 14 + level + (level / 3);
 			for(int i = 1; i <= 20; i++) {
 				if(skil + i >= diff || i == 20) {
@@ -334,7 +362,7 @@ public class Main : MonoBehaviour
 				}
 			}
 			skillStat = GetBestSkillStat(chr, 3);
-			skil = Character.GetStatValue(chr, maxTeml, skillStat);
+			skil = Character.GetStatValue(chr, maxTeml, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_LOWEST);
 			diff = 14 + level + (level / 3);
 			for(int i = 1; i <= 20; i++) {
 				if(skil + i >= diff || i == 20) {
@@ -389,8 +417,8 @@ public class Main : MonoBehaviour
 		return (TEML)baseSkill;
 	}
 
-	private static void CalcStatsForPair(Character chr, Monster mon, StatisticsResults result) {
-		int off = Character.GetStatValue(chr, chr.attacks, chr.attackStat);
+	private static void CalcStatsForPair(Character chr, Monster mon, StatisticsResults result, ItemBonusMode mode) {
+		int off = Character.GetStatValue(chr, chr.attacks, chr.attackStat, mode)+Character.GetItemBonus(chr,mode,ItemBonusType.WEAPON);
 		int def = Monster.GetArmor(mon.armorClass, mon.level);
 		result.attacktot++;
 		for(int i = 1; i <= 20; i++) {
@@ -428,10 +456,10 @@ public class Main : MonoBehaviour
 			if(chr.level < 8)
 				sdc = 17 + chr.level + (chr.level / 3);
 			else
-				sdc = Math.Max(Character.GetStatValue(chr, chr.classSpellDC, chr.classStat) + 10, 17 + chr.level + (chr.level / 3));
+				sdc = Math.Max(Character.GetStatValue(chr, chr.classSpellDC, chr.classStat, mode) + 10 + Character.GetItemBonus(chr, mode, ItemBonusType.SPELLDC), 17 + chr.level + (chr.level / 3));
 		}
 		else {
-			sdc = Character.GetStatValue(chr, chr.classSpellDC, chr.classStat) + 10;
+			sdc = Character.GetStatValue(chr, chr.classSpellDC, chr.classStat, mode) + 10 + Character.GetItemBonus(chr, mode, ItemBonusType.SPELLDC);
 		}
 		if(chr.canAffectsSaves.HasFlag(AffectType.FORT) || chr.canAffectsSaves.HasFlag(AffectType.FORT_LIVING)) {
 			result.spellDCtot++;
@@ -548,7 +576,7 @@ public class Main : MonoBehaviour
 			}
 		}
 		if(mon.canAffectsSaves.HasFlag(AffectType.FORT) || mon.canAffectsSaves.HasFlag(AffectType.FORT_LIVING)) {
-			sve = Character.GetStatValue(chr, chr.fort, StatAttr.CON);
+			sve = Character.GetStatValue(chr, chr.fort, StatAttr.CON, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SAVING_THROWS);
 			sdc = Monster.GetAbilityDC(mon.abilitySaveDC, mon.level);
 			result.forttot++;
 			for(int i = 1; i <= 20; i++) {
@@ -605,7 +633,7 @@ public class Main : MonoBehaviour
 			}
 		}
 		if(mon.canAffectsSaves.HasFlag(AffectType.REFX)) {
-			sve = Character.GetStatValue(chr, chr.refx, StatAttr.DEX);
+			sve = Character.GetStatValue(chr, chr.refx, StatAttr.DEX, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SAVING_THROWS);
 			sdc = Monster.GetAbilityDC(mon.abilitySaveDC, mon.level);
 			result.refxtot++;
 			for(int i = 1; i <= 20; i++) {
@@ -662,7 +690,7 @@ public class Main : MonoBehaviour
 			}
 		}
 		if(mon.canAffectsSaves.HasFlag(AffectType.WILL)) {
-			sve = Character.GetStatValue(chr, chr.will, StatAttr.WIS);
+			sve = Character.GetStatValue(chr, chr.will, StatAttr.WIS, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SAVING_THROWS);
 			sdc = Monster.GetAbilityDC(mon.abilitySaveDC, mon.level);
 			result.willtot++;
 			for(int i = 1; i <= 20; i++) {
@@ -719,7 +747,10 @@ public class Main : MonoBehaviour
 			}
 		}
 		off = Monster.GetAttack(mon.attacks, mon.level, mon.attacksAreSpells);
-		def = Character.GetArmorClass(chr, chr.armorClass, StatAttr.DEX) + 10 + chr.shieldBonus;
+		def = Character.GetArmorClass(chr, chr.armorClass, StatAttr.DEX, mode) + 10;
+		int b = Character.GetItemBonus(chr, mode, chr.armorType == ArmorType.HEAVY ? ItemBonusType.HEAVY_ARMOR : ItemBonusType.ARMOR);
+		Debug.Log("Def: " + def + "+"+b + " (" + chr.armorType + ")");
+		def += b;
 		result.armortot++;
 		for(int i = 1; i <= 20; i++) {
 			if(off + i >= def) {
@@ -750,7 +781,7 @@ public class Main : MonoBehaviour
 				result.armorClass[i - 1] += ((int)RollResult.FAIL) / 2f;
 			}
 		}
-		def = Character.GetArmorClass(chr, chr.armorClass, StatAttr.DEX) + 10;
+		def += chr.shieldBonus;
 		for(int i = 1; i <= 20; i++) {
 			if(off + i >= def) {
 				if(i == 1) {
@@ -780,9 +811,8 @@ public class Main : MonoBehaviour
 				result.armorClass[i - 1] += ((int)RollResult.FAIL)/2f;
 			}
 		}
-
 		if(mon.stealth != MTEML.NONE) {
-			int skil = Character.GetStatValue(chr, chr.perception, StatAttr.WIS);
+			int skil = Character.GetStatValue(chr, chr.perception, StatAttr.WIS, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.PERCEPTION);
 			int diff = 10 + Monster.GetStealth(mon.stealth, mon.level);
 			result.perceptiontot++;
 			for(int i = 1; i <= 20; i++) {
@@ -796,7 +826,7 @@ public class Main : MonoBehaviour
 		}
 	}
 
-	private void CalcStatsForPair(Character chr, Hazard haz, StatisticsResults result) {
+	private void CalcStatsForPair(Character chr, Hazard haz, StatisticsResults result, ItemBonusMode mode) {
 		int off;
 		int def;
 		int sve;
@@ -805,13 +835,13 @@ public class Main : MonoBehaviour
 			if(chr.level < 8)
 				sdc = 17 + chr.level + (chr.level / 3);
 			else
-				sdc = Math.Max(Character.GetStatValue(chr, chr.classSpellDC, chr.classStat) + 10, 17 + chr.level + (chr.level / 3));
+				sdc = Math.Max(Character.GetStatValue(chr, chr.classSpellDC, chr.classStat, mode) + 10 + Character.GetItemBonus(chr, mode, ItemBonusType.SPELLDC), 17 + chr.level + (chr.level / 3));
 		}
 		else {
-			sdc = Character.GetStatValue(chr, chr.classSpellDC, chr.classStat) + 10;
+			sdc = Character.GetStatValue(chr, chr.classSpellDC, chr.classStat, mode) + 10 + Character.GetItemBonus(chr, mode, ItemBonusType.SPELLDC);
 		}
 		if(haz.canBeAttacked) {
-			off = Character.GetStatValue(chr, chr.attacks, chr.attackStat);
+			off = Character.GetStatValue(chr, chr.attacks, chr.attackStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.WEAPON);
 			def = Hazard.GetArmorClass(haz.armorClass, haz.level);
 			result.attacktot++;
 			for(int i = 1; i <= 20; i++) {
@@ -846,7 +876,7 @@ public class Main : MonoBehaviour
 		}
 		if(haz.usesAttack) {
 			off = Hazard.GetAttack(haz.level, haz.isComplex);
-			def = Character.GetArmorClass(chr, chr.armorClass, StatAttr.DEX) + 10;
+			def = Character.GetArmorClass(chr, chr.armorClass, StatAttr.DEX, mode) + 10 + Character.GetItemBonus(chr, mode, chr.armorType == ArmorType.HEAVY ? ItemBonusType.HEAVY_ARMOR : ItemBonusType.ARMOR);
 			result.armortot++;
 			for(int i = 1; i <= 20; i++) {
 				if(off + i >= def) {
@@ -880,7 +910,7 @@ public class Main : MonoBehaviour
 		}
 		if(haz.usesSavingThrow) {
 			if(haz.canAffectsSaves.HasFlag(AffectType.FORT) || haz.canAffectsSaves.HasFlag(AffectType.FORT_LIVING)) {
-				sve = Character.GetStatValue(chr, chr.fort, StatAttr.CON);
+				sve = Character.GetStatValue(chr, chr.fort, StatAttr.CON, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SAVING_THROWS);
 				sdc = Hazard.GetSaveDC(haz.effectDifficultyClass, haz.level);
 				result.forttot++;
 				for(int i = 1; i <= 20; i++) {
@@ -937,7 +967,7 @@ public class Main : MonoBehaviour
 				}
 			}
 			if(haz.canAffectsSaves.HasFlag(AffectType.REFX)) {
-				sve = Character.GetStatValue(chr, chr.refx, StatAttr.DEX);
+				sve = Character.GetStatValue(chr, chr.refx, StatAttr.DEX, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SAVING_THROWS);
 				sdc = Hazard.GetSaveDC(haz.effectDifficultyClass, haz.level);
 				result.refxtot++;
 				for(int i = 1; i <= 20; i++) {
@@ -994,7 +1024,7 @@ public class Main : MonoBehaviour
 				}
 			}
 			if(haz.canAffectsSaves.HasFlag(AffectType.WILL)) {
-				sve = Character.GetStatValue(chr, chr.will, StatAttr.WIS);
+				sve = Character.GetStatValue(chr, chr.will, StatAttr.WIS, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SAVING_THROWS);
 				sdc = Hazard.GetSaveDC(haz.effectDifficultyClass, haz.level);
 				result.willtot++;
 				for(int i = 1; i <= 20; i++) {
@@ -1129,7 +1159,7 @@ public class Main : MonoBehaviour
 		}
 		result.totSkills++;
 		StatAttr skillStat = GetBestSkillStat(chr, 0);
-		off = Character.GetSkillValue(chr, GetBestTeml(chr, chr.level), skillStat);
+		off = Character.GetSkillValue(chr, GetBestTeml(chr, chr.level), skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_BEST);
 		def = Hazard.GetSkillDC(haz.disable, haz.level);
 		for(int i = 1; i <= 20; i++) {
 			if(off + i >= def || i == 20) {
@@ -1148,7 +1178,7 @@ public class Main : MonoBehaviour
 			}
 		}
 		skillStat = GetBestSkillStat(chr, 1);
-		off = Character.GetSkillValue(chr, GetBestTeml(chr, chr.level - 7), skillStat);
+		off = Character.GetSkillValue(chr, GetBestTeml(chr, chr.level - 7), skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_DECENT);
 		for(int i = 1; i <= 20; i++) {
 			if(off + i >= def || i == 20) {
 				if(off + i >= def + 10 || i == 20) {
@@ -1166,7 +1196,7 @@ public class Main : MonoBehaviour
 			}
 		}
 		skillStat = GetBestSkillStat(chr, 3);
-		off = Character.GetSkillValue(chr, TEML.TRAINED, skillStat);
+		off = Character.GetSkillValue(chr, TEML.TRAINED, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_LOWEST);
 		for(int i = 1; i <= 20; i++) {
 			if(off + i >= def || i == 20) {
 				if(off + i >= def + 10 || i == 20) {

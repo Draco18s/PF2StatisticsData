@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 103b5c95877788a4f9a03245b668ea29, type: 3}
-  m_Name: Dero_Stalker_2
+  m_Name: Sewer_Ooze_1
   m_EditorClassIdentifier: 
-  name: Dero Stalker
-  level: 2
+  name: Sewer_Ooze
+  level: 1
   weight: 1
-  attacks: 1
+  attacks: 2
   attacksAreSpells: 0
-  armorClass: 1
-  abilitySaveDC: 1
-  canAffectsSaves: 4
-  perception: 3
+  armorClass: 5
+  abilitySaveDC: 2
+  canAffectsSaves: 2
+  perception: 5
   fort: 2
-  refx: 1
+  refx: 5
   will: 4
-  stealth: 1
+  stealth: 4

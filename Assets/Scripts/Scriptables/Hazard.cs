@@ -28,6 +28,8 @@ public class Hazard : ScriptableObject {
 
 	public static int GetArmorClass(MTEML teml, int level) {
 		switch(teml) {
+			case MTEML.JUST_BONKERS:
+				return 21 + level + (level / 2) + (level < 2 ? 1 : 0);
 			case MTEML.EXTREME:
 				return 18 + level + (level / 2) + (level < 2 ? 1 : 0);
 			case MTEML.HIGH:
@@ -38,12 +40,16 @@ public class Hazard : ScriptableObject {
 				return 12 + level + (level / 2) + (level < 2 ? 1 : 0);
 			case MTEML.TERRIBLE:
 				return 9 + level + (level / 2) + (level < 2 ? 1 : 0);
+			case MTEML.THE_WORST:
+				return 6 + level + (level / 2);
 		}
 		return 0;
 	}
 
 	public static int GetFortReflexBonus(MTEML teml, int level) {
 		switch(teml) {
+			case MTEML.JUST_BONKERS:
+				return 13 + level + ((level - 1 + (level > 21 ? (1) : 0)) / 2);
 			case MTEML.EXTREME:
 				return 10 + level + ((level - 1+ (level > 21 ? (1) : 0)) / 2);
 			case MTEML.HIGH:
@@ -54,12 +60,16 @@ public class Hazard : ScriptableObject {
 				return 3 + level + ((level - 1 + (level > 5 ? (level > 10 ? (level > 15 ? (3) : 2) : 1) : 0)) / 3);
 			case MTEML.TERRIBLE:
 				return 0 + level + ((level - 1 + (level > 5 ? (level > 10 ? (level > 15 ? (3) : 2) : 1) : 0)) / 3);
+			case MTEML.THE_WORST:
+				return -3 + level + ((level - 1 + (level > 5 ? (level > 10 ? (level > 15 ? (3) : 2) : 1) : 0)) / 3);
 		}
 		return 0;
 	}
 
 	public static int GetSaveDC(MTEML teml, int level) {
 		switch(teml) {
+			case MTEML.JUST_BONKERS:
+				return 23 + level + ((level + 3) / 5) + ((level - 1 - (level > 23 ? 1 : 0)) / 5);
 			case MTEML.EXTREME:
 				return 19 + level + ((level + 3) / 5) + ((level - 1 - (level > 23 ? 1 : 0)) / 5);
 			case MTEML.HIGH:
@@ -70,14 +80,18 @@ public class Hazard : ScriptableObject {
 				return 12 + level + (level / 3);
 			case MTEML.TERRIBLE:
 				return 10 + level + (level / 3);
+			case MTEML.THE_WORST:
+				return 7 + level + ((level - 1) / 3);
 		}
 		return 0;
 	}
 
 	public static int GetSkillDC(MTEML teml, int level) {
 		switch(teml) {
+			case MTEML.JUST_BONKERS:
+				return 22 + level + (level / 3) + ((level - 1) / 3);
 			case MTEML.EXTREME:
-				return 19 + level + (level / 3) + ((level-1) / 3);
+				return 19 + level + (level / 3) + ((level - 1) / 3);
 			case MTEML.HIGH:
 				return 16 + level + (level / 3) + ((level - 1) / 3);
 			case MTEML.MODERATE:
@@ -86,6 +100,8 @@ public class Hazard : ScriptableObject {
 				return 12 + level + ((level - 1) / 3);
 			case MTEML.TERRIBLE:
 				return 7 + level + ((level - 1) / 3);
+			case MTEML.THE_WORST:
+				return 4 + level + ((level - 1) / 3);
 		}
 		return 0;
 	}

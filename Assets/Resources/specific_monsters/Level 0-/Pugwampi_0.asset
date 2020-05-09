@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 103b5c95877788a4f9a03245b668ea29, type: 3}
-  m_Name: Gnoll_Occultist_3
+  m_Name: Pugwampi_0
   m_EditorClassIdentifier: 
-  name: Gnoll Occultist
-  level: 3
+  name: Pugwampi
+  level: 0
   weight: 1
   attacks: 2
   attacksAreSpells: 0
   armorClass: 2
-  abilitySaveDC: 0
-  canAffectsSaves: 4
-  perception: 2
-  fort: 2
-  refx: 3
-  will: 2
+  abilitySaveDC: 5
+  canAffectsSaves: 0
+  perception: 3
+  fort: 3
+  refx: 2
+  will: 3
   stealth: 3

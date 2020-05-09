@@ -27,22 +27,22 @@ public class Character : ScriptableObject
 	public SaveIncrease willSaveBoost;
 	public StatArray stats;
 
-	public static int GetSkillValue(Character chr, TEML teml, StatAttr stat) {
+	public static int GetSkillValue(Character chr, TEML teml, StatAttr stat, ItemBonusMode mode) {
 		//TODO: items by level
 		if(teml > TEML.UNTRAINED)
-			return chr.level + (int)teml + StatArray.GetValue(chr.stats.GetRankFor(stat), chr.level);
-		return StatArray.GetValue(chr.stats.GetRankFor(stat), chr.level);
+			return chr.level + (int)teml + StatArray.GetValue(chr.stats.GetRankFor(stat), chr.level) + (chr.stats.GetRankFor(stat) == StatRank.KEY ? GetItemBonus(chr, mode, ItemBonusType.ATTRIBUTE) : 0);
+		return StatArray.GetValue(chr.stats.GetRankFor(stat), chr.level) + (chr.stats.GetRankFor(stat) == StatRank.KEY ? GetItemBonus(chr, mode, ItemBonusType.ATTRIBUTE) : 0);
 	}
 
-	public static int GetStatValue(Character chr, TEML teml, StatAttr stat) {
+	public static int GetStatValue(Character chr, TEML teml, StatAttr stat, ItemBonusMode mode) {
 		if(teml > TEML.UNTRAINED)
-			return chr.level + (int)teml + StatArray.GetValue(chr.stats.GetRankFor(stat), chr.level);
-		return StatArray.GetValue(chr.stats.GetRankFor(stat), chr.level);
+			return chr.level + (int)teml + StatArray.GetValue(chr.stats.GetRankFor(stat), chr.level) + (chr.stats.GetRankFor(stat) == StatRank.KEY ? GetItemBonus(chr, mode, ItemBonusType.ATTRIBUTE) : 0);
+		return StatArray.GetValue(chr.stats.GetRankFor(stat), chr.level) + (chr.stats.GetRankFor(stat) == StatRank.KEY ? GetItemBonus(chr, mode, ItemBonusType.ATTRIBUTE) : 0);
 	}
 
-	public static int GetArmorClass(Character chr, TEML teml, StatAttr stat) {
-		int dex = StatArray.GetValue(chr.stats.GetRankFor(StatAttr.DEX), chr.level);
-		int baseAC = GetStatValue(chr, teml, stat) - dex;
+	public static int GetArmorClass(Character chr, TEML teml, StatAttr stat, ItemBonusMode mode) {
+		int dex = StatArray.GetValue(chr.stats.GetRankFor(StatAttr.DEX), chr.level) + (chr.stats.GetRankFor(stat) == StatRank.KEY ? GetItemBonus(chr, mode, ItemBonusType.ATTRIBUTE) : 0);
+		int baseAC = GetStatValue(chr, teml, stat, mode) - dex;
 		int armorAC = 0;
 		switch (chr.armorType) {
 			case ArmorType.UNARMORED:
@@ -83,7 +83,83 @@ public class Character : ScriptableObject
 		return StatAttr.STR; //this will always fail at the caller
 	}
 
-	internal static int GetStatValue(Character chr, TEML maxTeml, object skillStat) {
-		throw new NotImplementedException();
+	public static int GetItemBonus(Character chr, ItemBonusMode mode, ItemBonusType bonus) {
+		switch(mode) {
+			case ItemBonusMode.ITEM:
+				return GetItemBonus(chr, bonus);
+			case ItemBonusMode.ABP:
+				return GetAPB(chr, bonus);
+			default:
+				return 0;
+		}
+	}
+
+	private static int GetItemBonus(Character chr, ItemBonusType bonus) {
+		return GetAPB(chr,bonus); //TODO
+	}
+
+	private static int GetAPB(Character chr, ItemBonusType bonus) {
+		switch(bonus) {
+			case ItemBonusType.WEAPON:
+				if(chr.level < 2)
+					return 0;
+				if(chr.level < 10)
+					return 1;
+				if(chr.level < 16)
+					return 2;
+				return 3;
+			case ItemBonusType.ARMOR:
+			case ItemBonusType.HEAVY_ARMOR:
+				if(chr.level < 5)
+					return 0;
+				if(chr.level < 11)
+					return 1;
+				if(chr.level < 18)
+					return 2;
+				return 3;
+			case ItemBonusType.SKILL_BEST:
+				if(chr.level < 3)
+					return 0;
+				if(chr.level < 9)
+					return 1;
+				if(chr.level < 17)
+					return 2;
+				return 3;
+			case ItemBonusType.SKILL_DECENT:
+				if(chr.level < 6)
+					return 0;
+				if(chr.level < 13)
+					return 1;
+				if(chr.level < 20)
+					return 2;
+				return 3;
+			case ItemBonusType.SKILL_LOWEST:
+				if(chr.level < 17)
+					return 0;
+				return 1;
+			case ItemBonusType.PERCEPTION:
+				if(chr.level < 7)
+					return 0;
+				if(chr.level < 13)
+					return 1;
+				if(chr.level < 19)
+					return 2;
+				return 3;
+			case ItemBonusType.ATTRIBUTE:
+				if(chr.level < 17)
+					return 0;
+				return 1;
+			case ItemBonusType.SPELLDC:
+				return 0;
+			case ItemBonusType.SAVING_THROWS:
+				if(chr.level < 8)
+					return 0;
+				if(chr.level < 14)
+					return 1;
+				if(chr.level < 20)
+					return 2;
+				return 3;
+		}
+		return 0;
 	}
 }

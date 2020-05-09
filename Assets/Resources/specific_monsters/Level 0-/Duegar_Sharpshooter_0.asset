@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 103b5c95877788a4f9a03245b668ea29, type: 3}
-  m_Name: Gorilla_3
+  m_Name: Duegar_Sharpshooter_0
   m_EditorClassIdentifier: 
-  name: Gorilla
-  level: 3
+  name: Duegar Sharpshooter
+  level: 0
   weight: 1
   attacks: 2
   attacksAreSpells: 0
-  armorClass: 1
-  abilitySaveDC: 1
-  canAffectsSaves: 4
-  perception: 2
-  fort: 1
-  refx: 2
-  will: 3
+  armorClass: 2
+  abilitySaveDC: 7
+  canAffectsSaves: 0
+  perception: 4
+  fort: 3
+  refx: 3
+  will: 4
   stealth: 3

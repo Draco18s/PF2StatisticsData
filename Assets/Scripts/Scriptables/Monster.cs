@@ -28,6 +28,8 @@ public class Monster : ScriptableObject
 	public static int GetAttack(MTEML teml, int level, bool isSpell) {
 		if(isSpell) return GetAbilityDC(teml, level) - 8;
 		switch(teml) {
+			case MTEML.JUST_BONKERS:
+				return 12 + level + ((level + 1) / 2);
 			case MTEML.EXTREME:
 				return 10 + level + (level / 2);
 			case MTEML.HIGH:
@@ -38,12 +40,16 @@ public class Monster : ScriptableObject
 				return 4 + level + ((level + 1) / 3);
 			case MTEML.TERRIBLE:
 				return 2 + level + ((level + 1) / 3);
+			case MTEML.THE_WORST:
+				return -1 + level + ((level + 1) / 3);
 		}
 		return 0;
 	}
 
 	public static int GetArmor(MTEML teml, int level) {
 		switch(teml) {
+			case MTEML.JUST_BONKERS:
+				return 21 + level + (level / 2) + (level < 1 ? 1 : 0);
 			case MTEML.EXTREME:
 				return 18 + level + (level / 2) + (level < 1 ? 1 : 0);
 			case MTEML.HIGH:
@@ -54,12 +60,16 @@ public class Monster : ScriptableObject
 				return 12 + level + (level / 2) + (level < 1 ? 1 : 0);
 			case MTEML.TERRIBLE:
 				return 8 + level + (level / 2) + (level < 1 ? 1 : 0);
+			case MTEML.THE_WORST:
+				return 4 + level + (level / 2) + (level < 1 ? 1 : 0);
 		}
 		return 0;
 	}
 
 	public static int GetAbilityDC(MTEML teml, int level) {
 		switch(teml) {
+			case MTEML.JUST_BONKERS:
+				return 22 + level + (level / 2);
 			case MTEML.EXTREME:
 				return 19 + level + (level / 2);
 			case MTEML.HIGH:
@@ -67,15 +77,19 @@ public class Monster : ScriptableObject
 			case MTEML.MODERATE:
 				return 13 + level + (level / 3);
 			case MTEML.LOW:
-				return 0;
+				return 10 + level + (level / 3);
 			case MTEML.TERRIBLE:
-				return 0;
+				return 7 + level + (level / 3);
+			case MTEML.THE_WORST:
+				return 4 + level + (level / 3);
 		}
 		return 0;
 	}
 
 	public static int GetPerception(MTEML teml, int level) {
 		switch(teml) {
+			case MTEML.JUST_BONKERS:
+				return 12 + level + (level / 2);
 			case MTEML.EXTREME:
 				return 10 + level + (level / 2);
 			case MTEML.HIGH:
@@ -86,6 +100,8 @@ public class Monster : ScriptableObject
 				return 3 + level + ((level - 1) / 5) + ((level + 1) / 5);
 			case MTEML.TERRIBLE:
 				return 1 + level + ((level - 1) / 3);
+			case MTEML.THE_WORST:
+				return -1 + level + ((level - 1) / 3);
 		}
 		return 0;
 	}
@@ -96,6 +112,8 @@ public class Monster : ScriptableObject
 
 	public static int GetStealth(MTEML teml, int level) {
 		switch(teml) {
+			case MTEML.JUST_BONKERS:
+				return 12 + level + (level / 3) + ((level - 1) / 3);
 			case MTEML.EXTREME:
 				return 9 + level + (level / 3) + ((level - 1) / 3);
 			case MTEML.HIGH:
@@ -106,6 +124,8 @@ public class Monster : ScriptableObject
 				return 3 + level + ((level - 1) / 2);
 			case MTEML.TERRIBLE:
 				return 2 + level + ((level + 1) / 3);
+			case MTEML.THE_WORST:
+				return -1 + level + ((level + 1) / 3);
 		}
 		return 0;
 	}
@@ -129,6 +149,6 @@ public class Monster : ScriptableObject
 			case MStatAttr.WILL:
 				return will;
 		}
-		return MTEML.TERRIBLE;
+		return MTEML.THE_WORST;
 	}
 }

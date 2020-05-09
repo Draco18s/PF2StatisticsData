@@ -9,19 +9,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4149affd7546514597e412786420610, type: 3}
-  m_Name: Spear_Launcher_2
+  m_Script: {fileID: 11500000, guid: 103b5c95877788a4f9a03245b668ea29, type: 3}
+  m_Name: Faerie_Dragon_2
   m_EditorClassIdentifier: 
-  name: Spear Launcher
+  name: Faerie Dragon
   level: 2
-  stealth: 1
-  disable: 2
-  canBeAttacked: 1
+  weight: 1
+  attacks: 2
+  attacksAreSpells: 0
   armorClass: 2
-  fortSave: 2
-  refxSave: 5
-  isComplex: 0
-  usesAttack: 1
-  usesSavingThrow: 0
-  effectDifficultyClass: 7
-  canAffectsSaves: 0
+  abilitySaveDC: 2
+  canAffectsSaves: 3
+  perception: 0
+  fort: 4
+  refx: 2
+  will: 2
+  stealth: 2

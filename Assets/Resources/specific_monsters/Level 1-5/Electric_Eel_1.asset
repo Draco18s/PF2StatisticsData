@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 103b5c95877788a4f9a03245b668ea29, type: 3}
-  m_Name: Faerie_Dragon_2
+  m_Name: Electric_Eel_1
   m_EditorClassIdentifier: 
-  name: Faerie Dragon
-  level: 2
+  name: Electric Eel
+  level: 1
   weight: 1
-  attacks: 1
+  attacks: 4
   attacksAreSpells: 0
-  armorClass: 1
-  abilitySaveDC: 1
-  canAffectsSaves: 3
-  perception: 0
+  armorClass: 2
+  abilitySaveDC: 2
+  canAffectsSaves: 1
+  perception: 4
   fort: 3
-  refx: 0
-  will: 1
-  stealth: 0
+  refx: 3
+  will: 4
+  stealth: 2

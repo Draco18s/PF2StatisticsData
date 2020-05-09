@@ -10,18 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb8dbce0926de0f44b1fdd4215006a4f, type: 3}
-  m_Name: Wizard_1
+  m_Name: Sorcerer_1
   m_EditorClassIdentifier: 
-  name: Wizard
+  name: Sorcerer
   level: 1
   attacks: 2
-  attackStat: 3
+  attackStat: 6
   armorClass: 2
   shieldBonus: 0
   armorType: 0
   classSpellDC: 2
-  canAffectsSaves: -1
-  classStat: 3
+  alchemistUseItemDC: 0
+  canAffectsSaves: 7
+  classStat: 6
   perception: 2
   firstSkillIncrease: 3
   fort: 2
@@ -32,8 +33,8 @@ MonoBehaviour:
   willSaveBoost: 0
   stats:
     STR: 4
-    DEX: 2
+    DEX: 1
     CON: 3
-    INT: 0
-    WIS: 1
-    CHA: 4
+    INT: 4
+    WIS: 2
+    CHA: 0

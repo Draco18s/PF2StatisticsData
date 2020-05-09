@@ -1,8 +1,10 @@
 ﻿public enum MTEML {
+	JUST_BONKERS,
 	EXTREME,
 	HIGH,
 	MODERATE,
 	LOW,
 	TERRIBLE,
+	THE_WORST,
 	NONE,
 }
