@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Barbarian_15
   m_EditorClassIdentifier: 
   name: Barbarian
-  level: 20
+  level: 15
   attacks: 6
   attackStat: 0
+  attackBoost: 0
   armorClass: 6
   shieldBonus: 1
   armorType: 2

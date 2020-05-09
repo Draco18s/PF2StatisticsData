@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 103b5c95877788a4f9a03245b668ea29, type: 3}
-  m_Name: Daeodon_4
+  m_Name: Pleroma_20
   m_EditorClassIdentifier: 
-  name: Daeodon
-  level: 4
+  name: Pleroma
+  level: 20
   weight: 1
-  perception: 3
-  stealth: 2
-  armorClass: 2
-  fort: 2
+  perception: 2
+  stealth: 3
+  armorClass: 0
+  fort: 3
   refx: 4
-  will: 3
+  will: 2
   attacks: 2
   attacksAreSpells: 0
-  abilitySaveDC: 3
-  canAffectsSaves: 2
+  abilitySaveDC: 1
+  canAffectsSaves: 7

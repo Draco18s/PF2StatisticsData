@@ -557,71 +557,71 @@ public class Main : MonoBehaviour
 		}
 	}
 
-	private static float GetRollResult(int i, int sve, int sdc, SaveIncrease saveBoost) {
+	private static float GetRollResult(int i, int off, int def, SaveIncrease saveBoost) {
 		if(i == 1) {
 			if(saveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-				return GetRerollResult(RollResult.FAIL, sve, sdc, saveBoost);
+				return GetRerollResult(RollResult.FAIL, off, def, saveBoost);
 			else
-				return GetRerollResult(RollResult.CRIT_FAIL, sve, sdc, saveBoost);
+				return GetRerollResult(RollResult.CRIT_FAIL, off, def, saveBoost);
 		}
-		if(i == 20) {
-			if(sve + i >= sdc) {
-				return GetRerollResult(RollResult.CRIT_SUCCESS, sve, sdc, saveBoost);
+		if(i == 20 || (saveBoost.HasFlag(SaveIncrease.CRIT_ON_19) && i == 19)) {
+			if(off + i >= def) {
+				return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, saveBoost);
 			}
-			else if(sve + i >= sdc - 10) {
+			else if(off + i >= def - 10 && i == 20) {
 				if(saveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-					return GetRerollResult(RollResult.CRIT_SUCCESS, sve, sdc, saveBoost);
+					return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, saveBoost);
 				else
-					return GetRerollResult(RollResult.SUCCESS, sve, sdc, saveBoost);
+					return GetRerollResult(RollResult.SUCCESS, off, def, saveBoost);
 			}
 			else {
 				if(saveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-					return GetRerollResult(RollResult.SUCCESS, sve, sdc, saveBoost);
+					return GetRerollResult(RollResult.SUCCESS, off, def, saveBoost);
 				else
-					return GetRerollResult(RollResult.FAIL, sve, sdc, saveBoost);
+					return GetRerollResult(RollResult.FAIL, off, def, saveBoost);
 			}
 		}
-		if(sve + i >= sdc) { //save
-			if(sve + i >= sdc + 10) { //crit
-				return GetRerollResult(RollResult.CRIT_SUCCESS, sve, sdc, saveBoost);
+		if(off + i >= def) { //save
+			if(off + i >= def + 10) { //crit
+				return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, saveBoost);
 			}
 			else {
 				if(saveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-					return GetRerollResult(RollResult.CRIT_SUCCESS, sve, sdc, saveBoost);
+					return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, saveBoost);
 				else
-					return GetRerollResult(RollResult.SUCCESS, sve, sdc, saveBoost);
+					return GetRerollResult(RollResult.SUCCESS, off, def, saveBoost);
 			}
 		}
 		else { //fail
-			if(sve + i <= sdc - 10) {
+			if(off + i <= def - 10) {
 				if(saveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-					return GetRerollResult(RollResult.FAIL, sve, sdc, saveBoost);
+					return GetRerollResult(RollResult.FAIL, off, def, saveBoost);
 				else
-					return GetRerollResult(RollResult.CRIT_FAIL, sve, sdc, saveBoost);
+					return GetRerollResult(RollResult.CRIT_FAIL, off, def, saveBoost);
 			}
 			else { //crit
 				if(saveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-					return GetRerollResult(RollResult.SUCCESS, sve, sdc, saveBoost);
+					return GetRerollResult(RollResult.SUCCESS, off, def, saveBoost);
 				else
-					return GetRerollResult(RollResult.FAIL, sve, sdc, saveBoost);
+					return GetRerollResult(RollResult.FAIL, off, def, saveBoost);
 			}
 		}
 	}
 
-	private static float GetRerollResult(RollResult baseResult, int sve, int sdc, SaveIncrease saveBoost) {
+	private static float GetRerollResult(RollResult baseResult, int off, int def, SaveIncrease saveBoost) {
 		float total = 0;
 		if(saveBoost.HasFlag(SaveIncrease.REROLL_FAILURE) && baseResult == RollResult.FAIL) {
-			total = RollSimpleSave(baseResult, sve+2, sdc, saveBoost, (int)RollResult.FAIL);
+			total = RollSimpleSave(baseResult, off+2, def, saveBoost, (int)RollResult.FAIL);
 			return ((int)baseResult * 3 + (total / 20)) / 4;
 		}
 		if(saveBoost.HasFlag(SaveIncrease.REROLL_CRITICAL_FAILURE) && baseResult == RollResult.CRIT_FAIL) {
-			total = RollSimpleSave(baseResult, sve+2, sdc, saveBoost, (int)RollResult.CRIT_FAIL);
+			total = RollSimpleSave(baseResult, off+2, def, saveBoost, (int)RollResult.CRIT_FAIL);
 			return ((int)baseResult * 3 + (total / 20)) / 4;
 		}
 		return (int)baseResult;
 	}
 
-	private static float RollSimpleSave(RollResult baseResult, int sve, int sdc, SaveIncrease saveBoost, int minimumResult) {
+	private static float RollSimpleSave(RollResult baseResult, int off, int def, SaveIncrease saveBoost, int minimumResult) {
 		float total = 0;
 		for(int i = 1; i <= 20; i++) {
 			if(i == 1) {
@@ -632,10 +632,10 @@ public class Main : MonoBehaviour
 				continue;
 			}
 			if(i == 20) {
-				if(sve + i >= sdc) {
+				if(off + i >= def) {
 					total += Math.Max((int)RollResult.CRIT_SUCCESS, minimumResult);
 				}
-				else if(sve + i >= sdc - 10) {
+				else if(off + i >= def - 10) {
 					if(saveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
 						total += Math.Max((int)RollResult.CRIT_SUCCESS, minimumResult);
 					else
@@ -649,8 +649,8 @@ public class Main : MonoBehaviour
 				}
 				continue;
 			}
-			if(sve + i >= sdc) { //save
-				if(sve + i >= sdc + 10) { //crit
+			if(off + i >= def) { //save
+				if(off + i >= def + 10) { //crit
 					total += Math.Max((int)RollResult.CRIT_SUCCESS, minimumResult);
 				}
 				else {
@@ -661,7 +661,7 @@ public class Main : MonoBehaviour
 				}
 			}
 			else { //fail
-				if(sve + i <= sdc - 10) {
+				if(off + i <= def - 10) {
 					if(saveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
 						total += Math.Max((int)RollResult.FAIL, minimumResult);
 					else

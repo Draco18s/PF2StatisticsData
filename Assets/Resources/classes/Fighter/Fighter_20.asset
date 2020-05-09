@@ -10,32 +10,32 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb8dbce0926de0f44b1fdd4215006a4f, type: 3}
-  m_Name: Bard_1
+  m_Name: Fighter_20
   m_EditorClassIdentifier: 
-  name: Bard
-  level: 1
-  attacks: 2
+  name: Fighter
+  level: 20
+  attacks: 8
   attackStat: 0
   attackBoost: 0
-  armorClass: 2
-  shieldBonus: 0
-  armorType: 1
-  classSpellDC: 2
+  armorClass: 6
+  shieldBonus: 2
+  armorType: 3
+  classSpellDC: 6
   alchemistUseItemDC: 0
-  canAffectsSaves: 12
-  classStat: 6
-  perception: 4
+  canAffectsSaves: 1
+  classStat: 0
+  perception: 5
   firstSkillIncrease: 3
-  fort: 2
-  fortSaveBoost: 0
-  refx: 2
-  refxSaveBoost: 0
-  will: 4
+  fort: 5
+  fortSaveBoost: 4
+  refx: 5
+  refxSaveBoost: 4
+  will: 2
   willSaveBoost: 0
   stats:
-    STR: 4
+    STR: 0
     DEX: 1
     CON: 2
-    INT: 3
+    INT: 4
     WIS: 3
-    CHA: 0
+    CHA: 4

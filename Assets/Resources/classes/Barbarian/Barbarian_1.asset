@@ -16,6 +16,7 @@ MonoBehaviour:
   level: 1
   attacks: 2
   attackStat: 0
+  attackBoost: 0
   armorClass: 2
   shieldBonus: -1
   armorType: 2

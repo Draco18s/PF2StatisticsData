@@ -8,4 +8,5 @@ public enum SaveIncrease {
 	SUCCESS_IS_CRIT_SUCCESS = 1<<2,
 	REROLL_FAILURE = 1<<3,
 	REROLL_CRITICAL_FAILURE = 1<<4,
+	CRIT_ON_19 = 1<<5,
 }

@@ -10,32 +10,32 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb8dbce0926de0f44b1fdd4215006a4f, type: 3}
-  m_Name: Bard_1
+  m_Name: Cleric_20
   m_EditorClassIdentifier: 
-  name: Bard
-  level: 1
-  attacks: 2
+  name: Cleric
+  level: 20
+  attacks: 4
   attackStat: 0
   attackBoost: 0
-  armorClass: 2
+  armorClass: 4
   shieldBonus: 0
-  armorType: 1
-  classSpellDC: 2
+  armorType: 0
+  classSpellDC: 8
   alchemistUseItemDC: 0
-  canAffectsSaves: 12
-  classStat: 6
+  canAffectsSaves: 14
+  classStat: 4
   perception: 4
   firstSkillIncrease: 3
-  fort: 2
+  fort: 4
   fortSaveBoost: 0
-  refx: 2
+  refx: 4
   refxSaveBoost: 0
-  will: 4
-  willSaveBoost: 0
+  will: 6
+  willSaveBoost: 4
   stats:
-    STR: 4
-    DEX: 1
-    CON: 2
-    INT: 3
-    WIS: 3
-    CHA: 0
+    STR: 1
+    DEX: 3
+    CON: 3
+    INT: 4
+    WIS: 0
+    CHA: 2
