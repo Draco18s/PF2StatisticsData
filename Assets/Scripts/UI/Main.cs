@@ -53,6 +53,7 @@ public class Main : MonoBehaviour
 			});
 		}
 		opts = new List<Dropdown.OptionData>();
+		availLevels.Sort();
 		foreach(int lv in availLevels) {
 			opts.Add(new Dropdown.OptionData(lv.ToString()));
 		}
@@ -326,59 +327,20 @@ public class Main : MonoBehaviour
 			skil = Character.GetStatValue(chr, maxTeml, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_BEST);
 			diff = 14 + level + (level / 3);
 			for(int i = 1; i <= 20; i++) {
-				if(skil + i >= diff || i == 20) {
-					if(skil + i >= diff + 10 || i == 20) {
-						result.skillSpecialist[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else
-						result.skillSpecialist[i - 1] += (int)RollResult.SUCCESS;
-				}
-				else {
-					if(skil + i < diff - 10 || i == 1) {
-						result.skillSpecialist[i - 1] += (int)RollResult.CRIT_FAIL;
-					}
-					else
-						result.skillSpecialist[i - 1] += (int)RollResult.FAIL;
-				}
+				result.skillSpecialist[i - 1] += GetRollResult(i, skil, diff, SaveIncrease.NONE);
 			}
 			maxTeml = GetBestTeml(chr, chr.level - 7);
 			skillStat = GetBestSkillStat(chr, 1);
 			skil = Character.GetStatValue(chr, maxTeml, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_DECENT);
 			diff = 14 + level + (level / 3);
 			for(int i = 1; i <= 20; i++) {
-				if(skil + i >= diff || i == 20) {
-					if(skil + i >= diff + 10 || i == 20) {
-						result.skillDecent[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else
-						result.skillDecent[i - 1] += (int)RollResult.SUCCESS;
-				}
-				else {
-					if(skil + i < diff - 10 || i == 1) {
-						result.skillDecent[i - 1] += (int)RollResult.CRIT_FAIL;
-					}
-					else
-						result.skillDecent[i - 1] += (int)RollResult.FAIL;
-				}
+				result.skillDecent[i - 1] += GetRollResult(i, skil, diff, SaveIncrease.NONE);
 			}
 			skillStat = GetBestSkillStat(chr, 3);
 			skil = Character.GetStatValue(chr, maxTeml, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_LOWEST);
 			diff = 14 + level + (level / 3);
 			for(int i = 1; i <= 20; i++) {
-				if(skil + i >= diff || i == 20) {
-					if(skil + i >= diff + 10 || i == 20) {
-						result.skillDabbler[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else
-						result.skillDabbler[i - 1] += (int)RollResult.SUCCESS;
-				}
-				else {
-					if(skil + i < diff - 10 || i == 1) {
-						result.skillDabbler[i - 1] += (int)RollResult.CRIT_FAIL;
-					}
-					else
-						result.skillDabbler[i - 1] += (int)RollResult.FAIL;
-				}
+				result.skillDabbler[i - 1] += GetRollResult(i, skil, diff, SaveIncrease.NONE);
 			}
 		}
 	}
@@ -422,33 +384,7 @@ public class Main : MonoBehaviour
 		int def = Monster.GetArmor(mon.armorClass, mon.level);
 		result.attacktot++;
 		for(int i = 1; i <= 20; i++) {
-			if(off + i >= def) {
-				if(i == 1) {
-					result.attack[i - 1] += (int)RollResult.FAIL;
-					continue;
-				}
-				if(i == 20) {
-					if(off + i >= def) {
-						result.attack[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else if(off + i >= def - 10) {
-						result.attack[i - 1] += (int)RollResult.SUCCESS;
-					}
-					else {
-						result.attack[i - 1] += (int)RollResult.FAIL;
-					}
-					continue;
-				}
-				if(off + i >= def + 10) {
-					result.attack[i - 1] += (int)RollResult.CRIT_SUCCESS;
-				}
-				else {
-					result.attack[i - 1] += (int)RollResult.SUCCESS;
-				}
-			}
-			else {
-				result.attack[i - 1] += (int)RollResult.FAIL;
-			}
+			result.attack[i - 1] += GetRollResult(i, off, def, chr.attackBoost);
 		}
 		int sdc;
 		int sve;
@@ -465,114 +401,21 @@ public class Main : MonoBehaviour
 			result.spellDCtot++;
 			sve = Monster.GetSavingThrow(mon.fort, mon.level);
 			for(int i = 1; i <= 20; i++) {
-				if(i == 1) {
-					result.classSpellDC[i - 1] += (int)RollResult.CRIT_FAIL;
-					continue;
-				}
-				if(i == 20) {
-					if(sve + i >= sdc) {
-						result.classSpellDC[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else if(sve + i >= sdc - 10) {
-						result.classSpellDC[i - 1] += (int)RollResult.SUCCESS;
-					}
-					else {
-						result.classSpellDC[i - 1] += (int)RollResult.FAIL;
-					}
-					continue;
-				}
-				if(sve + i >= sdc) { //save
-					if(sve + i >= sdc + 10) { //crit
-						result.classSpellDC[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else {
-						result.classSpellDC[i - 1] += (int)RollResult.SUCCESS;
-					}
-				}
-				else { //fail
-					if(sve + i <= sdc - 10) {
-						result.classSpellDC[i - 1] += (int)RollResult.CRIT_FAIL;
-					}
-					else { //crit
-						result.classSpellDC[i - 1] += (int)RollResult.FAIL;
-					}
-				}
+				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE);
 			}
 		}
 		if(chr.canAffectsSaves.HasFlag(AffectType.REFX)) {
 			result.spellDCtot++;
 			sve = Monster.GetSavingThrow(mon.refx, mon.level);
 			for(int i = 1; i <= 20; i++) {
-				if(i == 1) {
-					result.classSpellDC[i - 1] += (int)RollResult.CRIT_FAIL;
-					continue;
-				}
-				if(i == 20) {
-					if(sve + i >= sdc) {
-						result.classSpellDC[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else if(sve + i >= sdc - 10) {
-						result.classSpellDC[i - 1] += (int)RollResult.SUCCESS;
-					}
-					else {
-						result.classSpellDC[i - 1] += (int)RollResult.FAIL;
-					}
-					continue;
-				}
-				if(sve + i >= sdc) { //save
-					if(sve + i >= sdc + 10) { //crit
-						result.classSpellDC[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else {
-						result.classSpellDC[i - 1] += (int)RollResult.SUCCESS;
-					}
-				}
-				else { //fail
-					if(sve + i <= sdc - 10) {
-						result.classSpellDC[i - 1] += (int)RollResult.CRIT_FAIL;
-					}
-					else { //crit
-						result.classSpellDC[i - 1] += (int)RollResult.FAIL;
-					}
-				}
+				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE);
 			}
 		}
 		if(chr.canAffectsSaves.HasFlag(AffectType.WILL)) {
 			result.spellDCtot++;
 			sve = Monster.GetSavingThrow(mon.will, mon.level);
 			for(int i = 1; i <= 20; i++) {
-				if(i == 1) {
-					result.classSpellDC[i - 1] += (int)RollResult.CRIT_FAIL;
-					continue;
-				}
-				if(i == 20) {
-					if(sve + i >= sdc) {
-						result.classSpellDC[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else if(sve + i >= sdc - 10) {
-						result.classSpellDC[i - 1] += (int)RollResult.SUCCESS;
-					}
-					else {
-						result.classSpellDC[i - 1] += (int)RollResult.FAIL;
-					}
-					continue;
-				}
-				if(sve + i >= sdc) { //save
-					if(sve + i >= sdc + 10) { //crit
-						result.classSpellDC[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else {
-						result.classSpellDC[i - 1] += (int)RollResult.SUCCESS;
-					}
-				}
-				else { //fail
-					if(sve + i <= sdc - 10) {
-						result.classSpellDC[i - 1] += (int)RollResult.CRIT_FAIL;
-					}
-					else { //crit
-						result.classSpellDC[i - 1] += (int)RollResult.FAIL;
-					}
-				}
+				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE);
 			}
 		}
 		if(mon.canAffectsSaves.HasFlag(AffectType.FORT) || mon.canAffectsSaves.HasFlag(AffectType.FORT_LIVING)) {
@@ -580,56 +423,7 @@ public class Main : MonoBehaviour
 			sdc = Monster.GetAbilityDC(mon.abilitySaveDC, mon.level);
 			result.forttot++;
 			for(int i = 1; i <= 20; i++) {
-				if(i == 1) {
-					if(chr.fortSaveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-						result.fort[i - 1] += (int)RollResult.FAIL;
-					else
-						result.fort[i - 1] += (int)RollResult.CRIT_FAIL;
-					continue;
-				}
-				if(i == 20) {
-					if(sve + i >= sdc) {
-						result.fort[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else if(sve + i >= sdc - 10) {
-						if(chr.fortSaveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-							result.fort[i - 1] += (int)RollResult.CRIT_SUCCESS;
-						else
-							result.fort[i - 1] += (int)RollResult.SUCCESS;
-					}
-					else {
-						if(chr.fortSaveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-							result.fort[i - 1] += (int)RollResult.SUCCESS;
-						else
-							result.fort[i - 1] += (int)RollResult.FAIL;
-					}
-					continue;
-				}
-				if(sve + i >= sdc) { //save
-					if(sve + i >= sdc + 10) { //crit
-						result.fort[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else {
-						if(chr.fortSaveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-							result.fort[i - 1] += (int)RollResult.CRIT_SUCCESS;
-						else
-							result.fort[i - 1] += (int)RollResult.SUCCESS;
-					}
-				}
-				else { //fail
-					if(sve + i <= sdc - 10) {
-						if(chr.fortSaveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-							result.fort[i - 1] += (int)RollResult.FAIL;
-						else
-							result.fort[i - 1] += (int)RollResult.CRIT_FAIL;
-					}
-					else { //crit
-						if(chr.fortSaveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-							result.fort[i - 1] += (int)RollResult.SUCCESS;
-						else
-							result.fort[i - 1] += (int)RollResult.FAIL;
-					}
-				}
+				result.fort[i - 1] += GetRollResult(i, sve, sdc, chr.fortSaveBoost);
 			}
 		}
 		if(mon.canAffectsSaves.HasFlag(AffectType.REFX)) {
@@ -637,56 +431,7 @@ public class Main : MonoBehaviour
 			sdc = Monster.GetAbilityDC(mon.abilitySaveDC, mon.level);
 			result.refxtot++;
 			for(int i = 1; i <= 20; i++) {
-				if(i == 1) {
-					if(chr.refxSaveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-						result.refx[i - 1] += (int)RollResult.FAIL;
-					else
-						result.refx[i - 1] += (int)RollResult.CRIT_FAIL;
-					continue;
-				}
-				if(i == 20) {
-					if(sve + i >= sdc) {
-						result.refx[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else if(sve + i >= sdc - 10) {
-						if(chr.refxSaveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-							result.refx[i - 1] += (int)RollResult.CRIT_SUCCESS;
-						else
-							result.refx[i - 1] += (int)RollResult.SUCCESS;
-					}
-					else {
-						if(chr.refxSaveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-							result.refx[i - 1] += (int)RollResult.SUCCESS;
-						else
-							result.refx[i - 1] += (int)RollResult.FAIL;
-					}
-					continue;
-				}
-				if(sve + i >= sdc) { //save
-					if(sve + i >= sdc + 10) { //crit
-						result.refx[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else {
-						if(chr.refxSaveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-							result.refx[i - 1] += (int)RollResult.CRIT_SUCCESS;
-						else
-							result.refx[i - 1] += (int)RollResult.SUCCESS;
-					}
-				}
-				else { //fail
-					if(sve + i <= sdc - 10) {
-						if(chr.refxSaveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-							result.refx[i - 1] += (int)RollResult.FAIL;
-						else
-							result.refx[i - 1] += (int)RollResult.CRIT_FAIL;
-					}
-					else { //crit
-						if(chr.refxSaveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-							result.refx[i - 1] += (int)RollResult.SUCCESS;
-						else
-							result.refx[i - 1] += (int)RollResult.FAIL;
-					}
-				}
+				result.refx[i - 1] += GetRollResult(i, sve, sdc, chr.refxSaveBoost);
 			}
 		}
 		if(mon.canAffectsSaves.HasFlag(AffectType.WILL)) {
@@ -694,121 +439,18 @@ public class Main : MonoBehaviour
 			sdc = Monster.GetAbilityDC(mon.abilitySaveDC, mon.level);
 			result.willtot++;
 			for(int i = 1; i <= 20; i++) {
-				if(i == 1) {
-					if(chr.willSaveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-						result.will[i - 1] += (int)RollResult.FAIL;
-					else
-						result.will[i - 1] += (int)RollResult.CRIT_FAIL;
-					continue;
-				}
-				if(i == 20) {
-					if(sve + i >= sdc) {
-						result.will[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else if(sve + i >= sdc - 10) {
-						if(chr.willSaveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-							result.will[i - 1] += (int)RollResult.CRIT_SUCCESS;
-						else
-							result.will[i - 1] += (int)RollResult.SUCCESS;
-					}
-					else {
-						if(chr.willSaveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-							result.will[i - 1] += (int)RollResult.SUCCESS;
-						else
-							result.will[i - 1] += (int)RollResult.FAIL;
-					}
-					continue;
-				}
-				if(sve + i >= sdc) { //save
-					if(sve + i >= sdc + 10) { //crit
-						result.will[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else {
-						if(chr.willSaveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-							result.will[i - 1] += (int)RollResult.CRIT_SUCCESS;
-						else
-							result.will[i - 1] += (int)RollResult.SUCCESS;
-					}
-				}
-				else { //fail
-					if(sve + i <= sdc - 10) {
-						if(chr.willSaveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-							result.will[i - 1] += (int)RollResult.FAIL;
-						else
-							result.will[i - 1] += (int)RollResult.CRIT_FAIL;
-					}
-					else { //crit
-						if(chr.willSaveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-							result.will[i - 1] += (int)RollResult.SUCCESS;
-						else
-							result.will[i - 1] += (int)RollResult.FAIL;
-					}
-				}
+				result.will[i - 1] += GetRollResult(i, sve, sdc, chr.willSaveBoost);
 			}
 		}
-		off = Monster.GetAttack(mon.attacks, mon.level, mon.attacksAreSpells);
-		def = Character.GetArmorClass(chr, chr.armorClass, StatAttr.DEX, mode) + 10;
-		int b = Character.GetItemBonus(chr, mode, chr.armorType == ArmorType.HEAVY ? ItemBonusType.HEAVY_ARMOR : ItemBonusType.ARMOR);
-		Debug.Log("Def: " + def + "+"+b + " (" + chr.armorType + ")");
-		def += b;
-		result.armortot++;
-		for(int i = 1; i <= 20; i++) {
-			if(off + i >= def) {
-				if(i == 1) {
-					result.armorClass[i - 1] += ((int)RollResult.FAIL) / 2f;
-					continue;
-				}
-				if(i == 20) {
-					if(off + i >= def) {
-						result.armorClass[i - 1] += ((int)RollResult.CRIT_SUCCESS) / 2f;
-					}
-					else if(off + i >= def - 10) {
-						result.armorClass[i - 1] += ((int)RollResult.SUCCESS) / 2f;
-					}
-					else {
-						result.armorClass[i - 1] += ((int)RollResult.FAIL) / 2f;
-					}
-					continue;
-				}
-				if(off + i >= def + 10) {
-					result.armorClass[i - 1] += ((int)RollResult.CRIT_SUCCESS) / 2f;
-				}
-				else {
-					result.armorClass[i - 1] += ((int)RollResult.SUCCESS) / 2f;
-				}
-			}
-			else {
-				result.armorClass[i - 1] += ((int)RollResult.FAIL) / 2f;
-			}
-		}
-		def += chr.shieldBonus;
-		for(int i = 1; i <= 20; i++) {
-			if(off + i >= def) {
-				if(i == 1) {
-					result.armorClass[i - 1] += ((int)RollResult.FAIL)/2f;
-					continue;
-				}
-				if(i == 20) {
-					if(off + i >= def) {
-						result.armorClass[i - 1] += ((int)RollResult.CRIT_SUCCESS)/ 2f;
-					}
-					else if(off + i >= def - 10) {
-						result.armorClass[i - 1] += ((int)RollResult.SUCCESS)/2f;
-					}
-					else {
-						result.armorClass[i - 1] += ((int)RollResult.FAIL)/2f;
-					}
-					continue;
-				}
-				if(off + i >= def + 10) {
-					result.armorClass[i - 1] += ((int)RollResult.CRIT_SUCCESS)/2f;
-				}
-				else {
-					result.armorClass[i - 1] += ((int)RollResult.SUCCESS)/2f;
-				}
-			}
-			else {
-				result.armorClass[i - 1] += ((int)RollResult.FAIL)/2f;
+		if(mon.attacks != MTEML.NONE) {
+			off = Monster.GetAttack(mon.attacks, mon.level, mon.attacksAreSpells);
+			def = Character.GetArmorClass(chr, chr.armorClass, StatAttr.DEX, mode) + 10;
+			int b = Character.GetItemBonus(chr, mode, chr.armorType == ArmorType.HEAVY ? ItemBonusType.HEAVY_ARMOR : ItemBonusType.ARMOR);
+			def += b;
+			result.armortot++;
+			for(int i = 1; i <= 20; i++) {
+				result.armorClass[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE) / 2;
+				result.armorClass[i - 1] += GetRollResult(i, off, def + chr.shieldBonus, SaveIncrease.NONE) / 2;
 			}
 		}
 		if(mon.stealth != MTEML.NONE) {
@@ -845,33 +487,7 @@ public class Main : MonoBehaviour
 			def = Hazard.GetArmorClass(haz.armorClass, haz.level);
 			result.attacktot++;
 			for(int i = 1; i <= 20; i++) {
-				if(off + i >= def) {
-					if(i == 1) {
-						result.attack[i - 1] += (int)RollResult.FAIL;
-						continue;
-					}
-					if(i == 20) {
-						if(off + i >= def) {
-							result.attack[i - 1] += (int)RollResult.CRIT_SUCCESS;
-						}
-						else if(off + i >= def - 10) {
-							result.attack[i - 1] += (int)RollResult.SUCCESS;
-						}
-						else {
-							result.attack[i - 1] += (int)RollResult.FAIL;
-						}
-						continue;
-					}
-					if(off + i >= def + 10) {
-						result.attack[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else {
-						result.attack[i - 1] += (int)RollResult.SUCCESS;
-					}
-				}
-				else {
-					result.attack[i - 1] += (int)RollResult.FAIL;
-				}
+				result.attack[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE);
 			}
 		}
 		if(haz.usesAttack) {
@@ -879,33 +495,7 @@ public class Main : MonoBehaviour
 			def = Character.GetArmorClass(chr, chr.armorClass, StatAttr.DEX, mode) + 10 + Character.GetItemBonus(chr, mode, chr.armorType == ArmorType.HEAVY ? ItemBonusType.HEAVY_ARMOR : ItemBonusType.ARMOR);
 			result.armortot++;
 			for(int i = 1; i <= 20; i++) {
-				if(off + i >= def) {
-					if(i == 1) {
-						result.armorClass[i - 1] += (int)RollResult.FAIL;
-						continue;
-					}
-					if(i == 20) {
-						if(off + i >= def) {
-							result.armorClass[i - 1] += (int)RollResult.CRIT_SUCCESS;
-						}
-						else if(off + i >= def - 10) {
-							result.armorClass[i - 1] += (int)RollResult.SUCCESS;
-						}
-						else {
-							result.armorClass[i - 1] += (int)RollResult.FAIL;
-						}
-						continue;
-					}
-					if(off + i >= def + 10) {
-						result.armorClass[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else {
-						result.armorClass[i - 1] += (int)RollResult.SUCCESS;
-					}
-				}
-				else {
-					result.armorClass[i - 1] += (int)RollResult.FAIL;
-				}
+				result.armorClass[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE);
 			}
 		}
 		if(haz.usesSavingThrow) {
@@ -914,56 +504,7 @@ public class Main : MonoBehaviour
 				sdc = Hazard.GetSaveDC(haz.effectDifficultyClass, haz.level);
 				result.forttot++;
 				for(int i = 1; i <= 20; i++) {
-					if(i == 1) {
-						if(chr.fortSaveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-							result.fort[i - 1] += (int)RollResult.FAIL;
-						else
-							result.fort[i - 1] += (int)RollResult.CRIT_FAIL;
-						continue;
-					}
-					if(i == 20) {
-						if(sve + i >= sdc) {
-							result.fort[i - 1] += (int)RollResult.CRIT_SUCCESS;
-						}
-						else if(sve + i >= sdc - 10) {
-							if(chr.fortSaveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-								result.fort[i - 1] += (int)RollResult.CRIT_SUCCESS;
-							else
-								result.fort[i - 1] += (int)RollResult.SUCCESS;
-						}
-						else {
-							if(chr.fortSaveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-								result.fort[i - 1] += (int)RollResult.SUCCESS;
-							else
-								result.fort[i - 1] += (int)RollResult.FAIL;
-						}
-						continue;
-					}
-					if(sve + i >= sdc) { //save
-						if(sve + i >= sdc + 10) { //crit
-							result.fort[i - 1] += (int)RollResult.CRIT_SUCCESS;
-						}
-						else {
-							if(chr.fortSaveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-								result.fort[i - 1] += (int)RollResult.CRIT_SUCCESS;
-							else
-								result.fort[i - 1] += (int)RollResult.SUCCESS;
-						}
-					}
-					else { //fail
-						if(sve + i <= sdc - 10) {
-							if(chr.fortSaveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-								result.fort[i - 1] += (int)RollResult.FAIL;
-							else
-								result.fort[i - 1] += (int)RollResult.CRIT_FAIL;
-						}
-						else { //crit
-							if(chr.fortSaveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-								result.fort[i - 1] += (int)RollResult.SUCCESS;
-							else
-								result.fort[i - 1] += (int)RollResult.FAIL;
-						}
-					}
+					result.fort[i - 1] += GetRollResult(i, sve, sdc, chr.fortSaveBoost);
 				}
 			}
 			if(haz.canAffectsSaves.HasFlag(AffectType.REFX)) {
@@ -971,56 +512,7 @@ public class Main : MonoBehaviour
 				sdc = Hazard.GetSaveDC(haz.effectDifficultyClass, haz.level);
 				result.refxtot++;
 				for(int i = 1; i <= 20; i++) {
-					if(i == 1) {
-						if(chr.refxSaveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-							result.refx[i - 1] += (int)RollResult.FAIL;
-						else
-							result.refx[i - 1] += (int)RollResult.CRIT_FAIL;
-						continue;
-					}
-					if(i == 20) {
-						if(sve + i >= sdc) {
-							result.refx[i - 1] += (int)RollResult.CRIT_SUCCESS;
-						}
-						else if(sve + i >= sdc - 10) {
-							if(chr.refxSaveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-								result.refx[i - 1] += (int)RollResult.CRIT_SUCCESS;
-							else
-								result.refx[i - 1] += (int)RollResult.SUCCESS;
-						}
-						else {
-							if(chr.refxSaveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-								result.refx[i - 1] += (int)RollResult.SUCCESS;
-							else
-								result.refx[i - 1] += (int)RollResult.FAIL;
-						}
-						continue;
-					}
-					if(sve + i >= sdc) { //save
-						if(sve + i >= sdc + 10) { //crit
-							result.refx[i - 1] += (int)RollResult.CRIT_SUCCESS;
-						}
-						else {
-							if(chr.refxSaveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-								result.refx[i - 1] += (int)RollResult.CRIT_SUCCESS;
-							else
-								result.refx[i - 1] += (int)RollResult.SUCCESS;
-						}
-					}
-					else { //fail
-						if(sve + i <= sdc - 10) {
-							if(chr.refxSaveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-								result.refx[i - 1] += (int)RollResult.FAIL;
-							else
-								result.refx[i - 1] += (int)RollResult.CRIT_FAIL;
-						}
-						else { //crit
-							if(chr.refxSaveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-								result.refx[i - 1] += (int)RollResult.SUCCESS;
-							else
-								result.refx[i - 1] += (int)RollResult.FAIL;
-						}
-					}
+					result.refx[i - 1] += GetRollResult(i, sve, sdc, chr.refxSaveBoost);
 				}
 			}
 			if(haz.canAffectsSaves.HasFlag(AffectType.WILL)) {
@@ -1028,56 +520,7 @@ public class Main : MonoBehaviour
 				sdc = Hazard.GetSaveDC(haz.effectDifficultyClass, haz.level);
 				result.willtot++;
 				for(int i = 1; i <= 20; i++) {
-					if(i == 1) {
-						if(chr.willSaveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-							result.will[i - 1] += (int)RollResult.FAIL;
-						else
-							result.will[i - 1] += (int)RollResult.CRIT_FAIL;
-						continue;
-					}
-					if(i == 20) {
-						if(sve + i >= sdc) {
-							result.will[i - 1] += (int)RollResult.CRIT_SUCCESS;
-						}
-						else if(sve + i >= sdc - 10) {
-							if(chr.willSaveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-								result.will[i - 1] += (int)RollResult.CRIT_SUCCESS;
-							else
-								result.will[i - 1] += (int)RollResult.SUCCESS;
-						}
-						else {
-							if(chr.willSaveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-								result.will[i - 1] += (int)RollResult.SUCCESS;
-							else
-								result.will[i - 1] += (int)RollResult.FAIL;
-						}
-						continue;
-					}
-					if(sve + i >= sdc) { //save
-						if(sve + i >= sdc + 10) { //crit
-							result.will[i - 1] += (int)RollResult.CRIT_SUCCESS;
-						}
-						else {
-							if(chr.willSaveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-								result.will[i - 1] += (int)RollResult.CRIT_SUCCESS;
-							else
-								result.will[i - 1] += (int)RollResult.SUCCESS;
-						}
-					}
-					else { //fail
-						if(sve + i <= sdc - 10) {
-							if(chr.willSaveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-								result.will[i - 1] += (int)RollResult.FAIL;
-							else
-								result.will[i - 1] += (int)RollResult.CRIT_FAIL;
-						}
-						else { //crit
-							if(chr.willSaveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-								result.will[i - 1] += (int)RollResult.SUCCESS;
-							else
-								result.will[i - 1] += (int)RollResult.FAIL;
-						}
-					}
+					result.will[i - 1] += GetRollResult(i, sve, sdc, chr.willSaveBoost);
 				}
 			}
 		}
@@ -1085,76 +528,14 @@ public class Main : MonoBehaviour
 			result.spellDCtot++;
 			sve = Hazard.GetFortReflexBonus(haz.fortSave, haz.level);
 			for(int i = 1; i <= 20; i++) {
-				if(i == 1) {
-					result.classSpellDC[i - 1] += (int)RollResult.CRIT_FAIL;
-					continue;
-				}
-				if(i == 20) {
-					if(sve + i >= sdc) {
-						result.classSpellDC[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else if(sve + i >= sdc - 10) {
-						result.classSpellDC[i - 1] += (int)RollResult.SUCCESS;
-					}
-					else {
-						result.classSpellDC[i - 1] += (int)RollResult.FAIL;
-					}
-					continue;
-				}
-				if(sve + i >= sdc) { //save
-					if(sve + i >= sdc + 10) { //crit
-						result.classSpellDC[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else {
-						result.classSpellDC[i - 1] += (int)RollResult.SUCCESS;
-					}
-				}
-				else { //fail
-					if(sve + i <= sdc - 10) {
-						result.classSpellDC[i - 1] += (int)RollResult.CRIT_FAIL;
-					}
-					else { //crit
-						result.classSpellDC[i - 1] += (int)RollResult.FAIL;
-					}
-				}
+				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE);
 			}
 		}
 		if(haz.canBeAttacked && chr.canAffectsSaves.HasFlag(AffectType.REFX)) {
 			result.spellDCtot++;
 			sve = Hazard.GetFortReflexBonus(haz.refxSave, haz.level);
 			for(int i = 1; i <= 20; i++) {
-				if(i == 1) {
-					result.classSpellDC[i - 1] += (int)RollResult.CRIT_FAIL;
-					continue;
-				}
-				if(i == 20) {
-					if(sve + i >= sdc) {
-						result.classSpellDC[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else if(sve + i >= sdc - 10) {
-						result.classSpellDC[i - 1] += (int)RollResult.SUCCESS;
-					}
-					else {
-						result.classSpellDC[i - 1] += (int)RollResult.FAIL;
-					}
-					continue;
-				}
-				if(sve + i >= sdc) { //save
-					if(sve + i >= sdc + 10) { //crit
-						result.classSpellDC[i - 1] += (int)RollResult.CRIT_SUCCESS;
-					}
-					else {
-						result.classSpellDC[i - 1] += (int)RollResult.SUCCESS;
-					}
-				}
-				else { //fail
-					if(sve + i <= sdc - 10) {
-						result.classSpellDC[i - 1] += (int)RollResult.CRIT_FAIL;
-					}
-					else { //crit
-						result.classSpellDC[i - 1] += (int)RollResult.FAIL;
-					}
-				}
+				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE);
 			}
 		}
 		result.totSkills++;
@@ -1162,58 +543,141 @@ public class Main : MonoBehaviour
 		off = Character.GetSkillValue(chr, GetBestTeml(chr, chr.level), skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_BEST);
 		def = Hazard.GetSkillDC(haz.disable, haz.level);
 		for(int i = 1; i <= 20; i++) {
-			if(off + i >= def || i == 20) {
-				if(off + i >= def + 10 || i == 20) {
-					result.skillSpecialist[i - 1] += (int)RollResult.CRIT_SUCCESS;
-				}
-				else
-					result.skillSpecialist[i - 1] += (int)RollResult.SUCCESS;
-			}
-			else {
-				if(off + i < def - 10 || i == 1) {
-					result.skillSpecialist[i - 1] += (int)RollResult.CRIT_FAIL;
-				}
-				else
-					result.skillSpecialist[i - 1] += (int)RollResult.FAIL;
-			}
+			result.skillSpecialist[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE);
 		}
 		skillStat = GetBestSkillStat(chr, 1);
 		off = Character.GetSkillValue(chr, GetBestTeml(chr, chr.level - 7), skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_DECENT);
 		for(int i = 1; i <= 20; i++) {
-			if(off + i >= def || i == 20) {
-				if(off + i >= def + 10 || i == 20) {
-					result.skillDecent[i - 1] += (int)RollResult.CRIT_SUCCESS;
-				}
-				else
-					result.skillDecent[i - 1] += (int)RollResult.SUCCESS;
-			}
-			else {
-				if(off + i < def - 10 || i == 1) {
-					result.skillDecent[i - 1] += (int)RollResult.CRIT_FAIL;
-				}
-				else
-					result.skillDecent[i - 1] += (int)RollResult.FAIL;
-			}
+			result.skillDecent[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE);
 		}
 		skillStat = GetBestSkillStat(chr, 3);
 		off = Character.GetSkillValue(chr, TEML.TRAINED, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_LOWEST);
 		for(int i = 1; i <= 20; i++) {
-			if(off + i >= def || i == 20) {
-				if(off + i >= def + 10 || i == 20) {
-					result.skillDabbler[i - 1] += (int)RollResult.CRIT_SUCCESS;
-				}
+			result.skillDabbler[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE);
+		}
+	}
+
+	private static float GetRollResult(int i, int sve, int sdc, SaveIncrease saveBoost) {
+		if(i == 1) {
+			if(saveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
+				return GetRerollResult(RollResult.FAIL, sve, sdc, saveBoost);
+			else
+				return GetRerollResult(RollResult.CRIT_FAIL, sve, sdc, saveBoost);
+		}
+		if(i == 20) {
+			if(sve + i >= sdc) {
+				return GetRerollResult(RollResult.CRIT_SUCCESS, sve, sdc, saveBoost);
+			}
+			else if(sve + i >= sdc - 10) {
+				if(saveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
+					return GetRerollResult(RollResult.CRIT_SUCCESS, sve, sdc, saveBoost);
 				else
-					result.skillDabbler[i - 1] += (int)RollResult.SUCCESS;
+					return GetRerollResult(RollResult.SUCCESS, sve, sdc, saveBoost);
 			}
 			else {
-				if(off + i < def - 10 || i == 1) {
-					result.skillDabbler[i - 1] += (int)RollResult.CRIT_FAIL;
-				}
+				if(saveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
+					return GetRerollResult(RollResult.SUCCESS, sve, sdc, saveBoost);
 				else
-					result.skillDabbler[i - 1] += (int)RollResult.FAIL;
+					return GetRerollResult(RollResult.FAIL, sve, sdc, saveBoost);
+			}
+		}
+		if(sve + i >= sdc) { //save
+			if(sve + i >= sdc + 10) { //crit
+				return GetRerollResult(RollResult.CRIT_SUCCESS, sve, sdc, saveBoost);
+			}
+			else {
+				if(saveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
+					return GetRerollResult(RollResult.CRIT_SUCCESS, sve, sdc, saveBoost);
+				else
+					return GetRerollResult(RollResult.SUCCESS, sve, sdc, saveBoost);
+			}
+		}
+		else { //fail
+			if(sve + i <= sdc - 10) {
+				if(saveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
+					return GetRerollResult(RollResult.FAIL, sve, sdc, saveBoost);
+				else
+					return GetRerollResult(RollResult.CRIT_FAIL, sve, sdc, saveBoost);
+			}
+			else { //crit
+				if(saveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
+					return GetRerollResult(RollResult.SUCCESS, sve, sdc, saveBoost);
+				else
+					return GetRerollResult(RollResult.FAIL, sve, sdc, saveBoost);
 			}
 		}
 	}
+
+	private static float GetRerollResult(RollResult baseResult, int sve, int sdc, SaveIncrease saveBoost) {
+		float total = 0;
+		if(saveBoost.HasFlag(SaveIncrease.REROLL_FAILURE) && baseResult == RollResult.FAIL) {
+			total = RollSimpleSave(baseResult, sve+2, sdc, saveBoost, (int)RollResult.FAIL);
+			return ((int)baseResult * 3 + (total / 20)) / 4;
+		}
+		if(saveBoost.HasFlag(SaveIncrease.REROLL_CRITICAL_FAILURE) && baseResult == RollResult.CRIT_FAIL) {
+			total = RollSimpleSave(baseResult, sve+2, sdc, saveBoost, (int)RollResult.CRIT_FAIL);
+			return ((int)baseResult * 3 + (total / 20)) / 4;
+		}
+		return (int)baseResult;
+	}
+
+	private static float RollSimpleSave(RollResult baseResult, int sve, int sdc, SaveIncrease saveBoost, int minimumResult) {
+		float total = 0;
+		for(int i = 1; i <= 20; i++) {
+			if(i == 1) {
+				if(saveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
+					total += Math.Max((int)RollResult.FAIL, minimumResult);
+				else
+					total += Math.Max((int)RollResult.CRIT_FAIL, minimumResult);
+				continue;
+			}
+			if(i == 20) {
+				if(sve + i >= sdc) {
+					total += Math.Max((int)RollResult.CRIT_SUCCESS, minimumResult);
+				}
+				else if(sve + i >= sdc - 10) {
+					if(saveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
+						total += Math.Max((int)RollResult.CRIT_SUCCESS, minimumResult);
+					else
+						total += Math.Max((int)RollResult.SUCCESS, minimumResult);
+				}
+				else {
+					if(saveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
+						total += Math.Max((int)RollResult.SUCCESS, minimumResult);
+					else
+						total += Math.Max((int)RollResult.FAIL, minimumResult);
+				}
+				continue;
+			}
+			if(sve + i >= sdc) { //save
+				if(sve + i >= sdc + 10) { //crit
+					total += Math.Max((int)RollResult.CRIT_SUCCESS, minimumResult);
+				}
+				else {
+					if(saveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
+						total += Math.Max((int)RollResult.CRIT_SUCCESS, minimumResult);
+					else
+						total += Math.Max((int)RollResult.SUCCESS, minimumResult);
+				}
+			}
+			else { //fail
+				if(sve + i <= sdc - 10) {
+					if(saveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
+						total += Math.Max((int)RollResult.FAIL, minimumResult);
+					else
+						total += Math.Max((int)RollResult.CRIT_FAIL, minimumResult);
+				}
+				else { //crit
+					if(saveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
+						total += Math.Max((int)RollResult.SUCCESS, minimumResult);
+					else
+						total += Math.Max((int)RollResult.FAIL, minimumResult);
+				}
+			}
+		}
+		return total;
+	}
+
 	public static void HideTooltip() {
 		instance.tooltip.SetActive(false);
 	}

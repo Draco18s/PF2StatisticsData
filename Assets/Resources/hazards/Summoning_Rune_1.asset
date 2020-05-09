@@ -17,11 +17,11 @@ MonoBehaviour:
   stealth: 4
   disable: 1
   canBeAttacked: 0
-  armorClass: 6
-  fortSave: 6
-  refxSave: 6
+  armorClass: 7
+  fortSave: 7
+  refxSave: 7
   isComplex: 1
   usesAttack: 0
   usesSavingThrow: 0
-  effectDifficultyClass: 0
+  effectDifficultyClass: 7
   canAffectsSaves: 0

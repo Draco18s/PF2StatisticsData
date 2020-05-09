@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 103b5c95877788a4f9a03245b668ea29, type: 3}
-  m_Name: Faerie_Dragon_2
+  m_Name: Young_White_Dragon_6
   m_EditorClassIdentifier: 
-  name: Faerie Dragon
-  level: 2
+  name: Young White Dragon
+  level: 6
   weight: 1
-  perception: 0
-  stealth: 2
-  armorClass: 2
-  fort: 4
-  refx: 2
-  will: 2
   attacks: 2
   attacksAreSpells: 0
+  armorClass: 3
   abilitySaveDC: 2
-  canAffectsSaves: 3
+  canAffectsSaves: 2
+  perception: 3
+  fort: 2
+  refx: 3
+  will: 4
+  stealth: 3

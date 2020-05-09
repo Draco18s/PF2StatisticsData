@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4149affd7546514597e412786420610, type: 3}
-  m_Name: Drowning_Pit_3
+  m_Name: Bottomless_Pit_9
   m_EditorClassIdentifier: 
-  name: Drowning Pit
-  level: 3
-  stealth: 5
-  disable: 1
+  name: Bottomless Pit
+  level: 9
+  stealth: 2
+  disable: 3
   canBeAttacked: 1
-  armorClass: 2
-  fortSave: 3
-  refxSave: 4
-  isComplex: 1
+  armorClass: 3
+  fortSave: 5
+  refxSave: 5
+  isComplex: 0
   usesAttack: 0
   usesSavingThrow: 1
   effectDifficultyClass: 3

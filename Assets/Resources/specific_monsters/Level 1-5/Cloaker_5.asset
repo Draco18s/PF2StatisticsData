@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Cloaker
   level: 5
-  weight: 0
+  weight: 5
   attacks: 3
   attacksAreSpells: 0
   armorClass: 2

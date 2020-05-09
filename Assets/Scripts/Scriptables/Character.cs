@@ -10,6 +10,7 @@ public class Character : ScriptableObject
 	public int level;
 	public TEML attacks;
 	public StatAttr attackStat;
+	public SaveIncrease attackBoost;
 	public TEML armorClass;
 	public int shieldBonus;
 	public ArmorType armorType;

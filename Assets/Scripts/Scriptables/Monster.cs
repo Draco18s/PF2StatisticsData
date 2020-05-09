@@ -9,16 +9,16 @@ public class Monster : ScriptableObject
 	new public string name;
 	public int level;
 	public float weight;
-	public MTEML attacks;
-	public bool attacksAreSpells;
-	public MTEML armorClass;
-	public MTEML abilitySaveDC;
-	public AffectType canAffectsSaves;
 	public MTEML perception;
+	public MTEML stealth;
+	public MTEML armorClass;
 	public MTEML fort;
 	public MTEML refx;
 	public MTEML will;
-	public MTEML stealth;
+	public MTEML attacks;
+	public bool attacksAreSpells;
+	public MTEML abilitySaveDC;
+	public AffectType canAffectsSaves;
 
 	/*public static int GetStatValue(Monster mon, MStatAttr stat) {
 		MTEML teml = mon.GetAttribute(stat);
@@ -89,7 +89,7 @@ public class Monster : ScriptableObject
 	public static int GetPerception(MTEML teml, int level) {
 		switch(teml) {
 			case MTEML.JUST_BONKERS:
-				return 12 + level + (level / 2);
+				return 13 + level + (level / 2);
 			case MTEML.EXTREME:
 				return 10 + level + (level / 2);
 			case MTEML.HIGH:
@@ -107,6 +107,10 @@ public class Monster : ScriptableObject
 	}
 
 	public static int GetSavingThrow(MTEML teml, int level) {
+		switch(teml) {
+			case MTEML.JUST_BONKERS:
+				return 17 + level + (level / 2);
+		}
 		return GetPerception(teml, level);
 	}
 

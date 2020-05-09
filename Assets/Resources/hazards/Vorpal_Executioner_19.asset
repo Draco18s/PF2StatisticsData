@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Vorpal_Executioner_19
   m_EditorClassIdentifier: 
   name: Vorpal Executioner
-  level: 15
+  level: 19
   stealth: 3
   disable: 3
   canBeAttacked: 1

@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 103b5c95877788a4f9a03245b668ea29, type: 3}
-  m_Name: Faerie_Dragon_2
+  m_Name: Kobold_Dragon_Mage_2
   m_EditorClassIdentifier: 
-  name: Faerie Dragon
+  name: Kobold Dragon Mage
   level: 2
   weight: 1
-  perception: 0
-  stealth: 2
-  armorClass: 2
-  fort: 4
-  refx: 2
-  will: 2
-  attacks: 2
+  perception: 4
+  stealth: 3
+  armorClass: 3
+  fort: 5
+  refx: 3
+  will: 3
+  attacks: 4
   attacksAreSpells: 0
-  abilitySaveDC: 2
-  canAffectsSaves: 3
+  abilitySaveDC: 1
+  canAffectsSaves: 6

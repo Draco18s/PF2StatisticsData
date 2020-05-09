@@ -10,31 +10,31 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb8dbce0926de0f44b1fdd4215006a4f, type: 3}
-  m_Name: Alchemist_15
+  m_Name: Barbarian_20
   m_EditorClassIdentifier: 
-  name: Alchemist
+  name: Barbarian
   level: 15
-  attacks: 4
-  attackStat: 1
+  attacks: 6
+  attackStat: 0
   armorClass: 4
-  shieldBonus: 0
-  armorType: 1
+  shieldBonus: 1
+  armorType: 2
   classSpellDC: 4
-  alchemistUseItemDC: 1
-  canAffectsSaves: 8
-  classStat: 3
+  alchemistUseItemDC: 0
+  canAffectsSaves: 3
+  classStat: 0
   perception: 4
   firstSkillIncrease: 3
-  fort: 6
-  fortSaveBoost: 4
-  refx: 6
-  refxSaveBoost: 4
-  will: 4
-  willSaveBoost: 0
+  fort: 8
+  fortSaveBoost: 5
+  refx: 4
+  refxSaveBoost: 0
+  will: 6
+  willSaveBoost: 28
   stats:
-    STR: 4
+    STR: 0
     DEX: 2
-    CON: 3
-    INT: 0
-    WIS: 1
+    CON: 1
+    INT: 4
+    WIS: 3
     CHA: 4

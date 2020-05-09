@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Alchemist_20
   m_EditorClassIdentifier: 
   name: Alchemist
-  level: 10
+  level: 20
   attacks: 4
   attackStat: 1
   armorClass: 6
