@@ -21,10 +21,14 @@ public class Main : MonoBehaviour
 	public GameObject tooltip;
 	public ItemBonusMode itemBonusMode = ItemBonusMode.ITEM;
 	private Character[] allChar;
+	private Monster[] allMons;
+	private Hazard[] allHaz;
 
 	void Start() {
 		instance = this;
 		allChar = Resources.LoadAll<Character>("classes");
+		allMons = Resources.LoadAll<Monster>("specific_monsters");
+		allHaz = Resources.LoadAll<Hazard>("hazards");
 		List<int> availLevels = new List<int>();
 		List<Dropdown.OptionData> opts;
 		for(int i = 0; i < dropdowns.Length; i++) {
@@ -108,8 +112,6 @@ public class Main : MonoBehaviour
 
 	private bool Test(Character character, GameObject window) {
 		if(character == null) return true;
-		Monster[] allMons = Resources.LoadAll<Monster>("specific_monsters");
-		Hazard[] allHaz = Resources.LoadAll<Hazard>("hazards");
 		int minLv, maxLv;
 		GetDifficultyLevel(character.level, diffSetting, out minLv, out maxLv);
 		if(maxLv < -5) return true;
@@ -148,19 +150,31 @@ public class Main : MonoBehaviour
 				maxLv = level + 4;
 				break;
 			case 7:
-				minLv = maxLv = level-2;
+				minLv = maxLv = level - 4;
 				break;
 			case 8:
-				minLv = maxLv = level - 1;
+				minLv = maxLv = level - 3;
 				break;
 			case 9:
-				minLv = maxLv = level;
+				minLv = maxLv = level - 2;
 				break;
 			case 10:
-				minLv = maxLv = level + 1;
+				minLv = maxLv = level - 1;
 				break;
 			case 11:
+				minLv = maxLv = level;
+				break;
+			case 12:
+				minLv = maxLv = level + 1;
+				break;
+			case 13:
 				minLv = maxLv = level + 2;
+				break;
+			case 14:
+				minLv = maxLv = level + 3;
+				break;
+			case 15:
+				minLv = maxLv = level + 4;
 				break;
 			default:
 				minLv = maxLv = -10;
@@ -313,7 +327,7 @@ public class Main : MonoBehaviour
 		for(int level = minLv; level <= maxLv; level++) {
 			result.totSkills++;
 			result.perceptiontot++;
-			int diff = 14 + level + (level / 3);
+			int diff = 14 + level + (level / 3) + (level >= 5 ? (level >= 23 ? (level >= 25 ? 3 : 2) : 1) : 0);
 			for(int i = 1; i <= 20; i++) {
 				if(skil + i >= diff) {
 					result.perception[i - 1] += (int)RollResult.SUCCESS;
@@ -325,20 +339,20 @@ public class Main : MonoBehaviour
 			TEML maxTeml = GetBestTeml(chr, chr.level);
 			StatAttr skillStat = (chr.classStat != StatAttr.CON && level < maxLv ? chr.classStat : GetBestSkillStat(chr, 0));
 			skil = Character.GetStatValue(chr, maxTeml, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_BEST);
-			diff = 14 + level + (level / 3);
+			//diff = 14 + level + (level / 3);
 			for(int i = 1; i <= 20; i++) {
 				result.skillSpecialist[i - 1] += GetRollResult(i, skil, diff, SaveIncrease.NONE);
 			}
-			maxTeml = GetBestTeml(chr, chr.level - 7);
+			maxTeml = GetBestTeml(chr, chr.level / 2);
 			skillStat = GetBestSkillStat(chr, 1);
 			skil = Character.GetStatValue(chr, maxTeml, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_DECENT);
-			diff = 14 + level + (level / 3);
+			//diff = 14 + level + (level / 3);
 			for(int i = 1; i <= 20; i++) {
 				result.skillDecent[i - 1] += GetRollResult(i, skil, diff, SaveIncrease.NONE);
 			}
 			skillStat = GetBestSkillStat(chr, 3);
-			skil = Character.GetStatValue(chr, maxTeml, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_LOWEST);
-			diff = 14 + level + (level / 3);
+			skil = Character.GetStatValue(chr, TEML.TRAINED, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_LOWEST);
+			//diff = 14 + level + (level / 3);
 			for(int i = 1; i <= 20; i++) {
 				result.skillDabbler[i - 1] += GetRollResult(i, skil, diff, SaveIncrease.NONE);
 			}
@@ -393,8 +407,18 @@ public class Main : MonoBehaviour
 			for(int i = 1; i <= 20; i++) {
 				float total = 0;
 				for(int s = 1; s <= 20; s++) {
-					//recall knowledge DC is "up to the GM" so just assuming a flat DC 10 roll, +/- based on level difference
-					if(GetRollResult(s, 0, 10 + diff, SaveIncrease.NONE) >= (chr.attackBoost.HasFlag(SaveIncrease.MASTER_MONSTER_HUNTER) ? 2 : 1)) {
+					//basing recall knowledge off an average between a decent skill and a dabbler
+					//to account for there being 4 different skills (odds are high that a ranger isn't going to be best at more than 1)
+
+					TEML maxTeml = GetBestTeml(chr, chr.level / 2);
+					StatAttr skillStat = GetBestSkillStat(chr, 1);
+					int skil1 = Character.GetStatValue(chr, maxTeml, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_DECENT);
+					skillStat = GetBestSkillStat(chr, 3);
+					int skil2 = Character.GetStatValue(chr, TEML.TRAINED, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_LOWEST);
+					int skil = (skil1 + skil2) / 2;
+
+					diff = 14 + mon.level + (mon.level / 3) + (mon.level >= 5 ? (mon.level >= 23 ? (mon.level >= 25 ? 3 : 2) : 1) : 0);
+					if(GetRollResult(s, skil, diff, SaveIncrease.NONE) >= (chr.attackBoost.HasFlag(SaveIncrease.MASTER_MONSTER_HUNTER) ? 2 : 1)) {
 						total += GetRollResult(i, off + monsterHunter, def, chr.attackBoost);
 					}
 					else {

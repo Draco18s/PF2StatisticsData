@@ -71,7 +71,7 @@ public class Monster : ScriptableObject
 			case MTEML.JUST_BONKERS:
 				return 22 + level + (level / 2);
 			case MTEML.EXTREME:
-				return 19 + level + (level / 2);
+				return 19 + level + ((level + 3) / 5) + ((level + 1) / 5) + (level > 23 ? -1 : 0);
 			case MTEML.HIGH:
 				return 16 + level + (level / 3);
 			case MTEML.MODERATE:

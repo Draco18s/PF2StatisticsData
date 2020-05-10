@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 103b5c95877788a4f9a03245b668ea29, type: 3}
-  m_Name: Tarn_Linnorn
+  m_Name: Wemmuth_15
   m_EditorClassIdentifier: 
-  name: Tarn Linnorn
-  level: 20
+  name: Wemmuth
+  level: 15
   weight: 1
-  perception: 2
+  perception: 3
   stealth: 3
-  armorClass: 0
-  fort: 2
+  armorClass: 2
+  fort: 3
   refx: 3
   will: 4
-  attacks: 2
+  attacks: 3
   attacksAreSpells: 0
   abilitySaveDC: 2
-  canAffectsSaves: 7
+  canAffectsSaves: 1
