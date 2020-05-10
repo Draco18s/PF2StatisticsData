@@ -16,7 +16,7 @@ MonoBehaviour:
   level: 20
   attacks: 8
   attackStat: 0
-  attackBoost: 0
+  attackBoost: 32
   armorClass: 6
   shieldBonus: 2
   armorType: 3

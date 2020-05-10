@@ -10,22 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb8dbce0926de0f44b1fdd4215006a4f, type: 3}
-  m_Name: Monk_1
+  m_Name: Ranger_5
   m_EditorClassIdentifier: 
-  name: Monk
-  level: 1
-  attacks: 2
-  attackStat: 0
-  attackBoost: 0
-  armorClass: 4
+  name: Ranger
+  level: 5
+  attacks: 4
+  attackStat: 1
+  attackBoost: 2048
+  armorClass: 2
   defenseBoost: 0
-  shieldBonus: 1
-  armorType: 0
+  shieldBonus: 2
+  armorType: 1
   classSpellDC: 2
   alchemistUseItemDC: 0
   canAffectsSaves: 0
   classStat: 1
-  perception: 2
+  perception: 4
   firstSkillIncrease: 3
   fort: 4
   fortSaveBoost: 0
@@ -34,9 +34,9 @@ MonoBehaviour:
   will: 4
   willSaveBoost: 0
   stats:
-    STR: 1
+    STR: 3
     DEX: 0
-    CON: 3
+    CON: 1
     INT: 4
     WIS: 2
     CHA: 4

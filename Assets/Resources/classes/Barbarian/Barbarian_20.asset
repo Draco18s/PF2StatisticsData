@@ -18,6 +18,7 @@ MonoBehaviour:
   attackStat: 0
   attackBoost: 24
   armorClass: 4
+  defenseBoost: 0
   shieldBonus: 1
   armorType: 2
   classSpellDC: 4

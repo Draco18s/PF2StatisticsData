@@ -15,14 +15,16 @@ MonoBehaviour:
   name: Sorcerer
   level: 1
   attacks: 2
-  attackStat: 6
+  attackStat: 5
+  attackBoost: 0
   armorClass: 2
+  defenseBoost: 0
   shieldBonus: 0
   armorType: 0
   classSpellDC: 2
   alchemistUseItemDC: 0
-  canAffectsSaves: 7
-  classStat: 6
+  canAffectsSaves: -1
+  classStat: 5
   perception: 2
   firstSkillIncrease: 3
   fort: 2
