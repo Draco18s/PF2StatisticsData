@@ -17,7 +17,7 @@ MonoBehaviour:
   weight: 1
   perception: 2
   stealth: 3
-  armorClass: 0
+  armorClass: 2
   fort: 3
   refx: 4
   will: 2

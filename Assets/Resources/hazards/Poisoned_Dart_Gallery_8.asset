@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4149affd7546514597e412786420610, type: 3}
-  m_Name: Scythe_Blades_4
+  m_Name: Poisoned_Dart_Gallery_8
   m_EditorClassIdentifier: 
-  name: Scythe Blades
-  level: 4
-  stealth: 2
-  disable: 2
+  name: Poisoned Dart Gallery
+  level: 8
+  stealth: 5
+  disable: 4
   canBeAttacked: 1
-  armorClass: 2
-  fortSave: 3
-  refxSave: 4
+  armorClass: 3
+  fortSave: 4
+  refxSave: 3
   isComplex: 1
   usesAttack: 1
-  usesSavingThrow: 0
-  effectDifficultyClass: 7
+  usesSavingThrow: 1
+  effectDifficultyClass: 4
   canAffectsSaves: 0

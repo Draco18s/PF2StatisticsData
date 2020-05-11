@@ -31,8 +31,8 @@ MonoBehaviour:
   fortSaveBoost: 0
   refx: 4
   refxSaveBoost: 0
-  will: 4
-  willSaveBoost: 0
+  will: 6
+  willSaveBoost: 4
   stats:
     STR: 4
     DEX: 1

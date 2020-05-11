@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4149affd7546514597e412786420610, type: 3}
-  m_Name: Scythe_Blades_4
+  m_Name: Telekinetic_Swarm_Trap_12
   m_EditorClassIdentifier: 
-  name: Scythe Blades
-  level: 4
-  stealth: 2
-  disable: 2
+  name: Telekinetic Swarm Trap
+  level: 12
+  stealth: 5
+  disable: 3
   canBeAttacked: 1
-  armorClass: 2
+  armorClass: 3
   fortSave: 3
   refxSave: 4
   isComplex: 1
