@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Banshee's Symphony
   level: 18
-  stealth: 5
+  stealth: 3
   disable: 2
   canBeAttacked: 0
   armorClass: 7

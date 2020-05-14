@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.draco18s.ui;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -28,5 +29,25 @@ public class BreakdownBar : MonoBehaviour
 		for(int i = 0; i < 20; i++) {
 			bits[i].color = colors[i];
 		}
+	}
+
+	public void SetNotches(int low, int high) {
+		low++;
+		RectTransform rt = (RectTransform)transform.Find("CritNotch");
+		rt.anchoredPosition = new Vector2(high * 10 - 105, 11);
+		rt.SetAsLastSibling();
+		Image i = rt.GetComponent<Image>();
+		i.AddHover(p => {
+			Main.ShowTooltip(rt.position, high+"+ might crit");
+		});
+		i.enabled = false;// high > 0;
+		RectTransform rt2 = (RectTransform)transform.Find("MissNotch");
+		rt2.anchoredPosition = new Vector2(low * 10 - 105, -11);
+		rt2.SetAsLastSibling();
+		i = rt2.GetComponent<Image>();
+		i.AddHover(p => {
+			Main.ShowTooltip(rt2.position, low+"+ always succeeds");
+		});
+		i.enabled = low > 0 && low < 21;
 	}
 }

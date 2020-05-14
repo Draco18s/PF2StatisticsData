@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Quicksand
   level: 3
-  stealth: 5
+  stealth: 1
   disable: 3
   canBeAttacked: 0
   armorClass: 7

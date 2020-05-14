@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Darkside Mirror
   level: 14
-  stealth: 5
+  stealth: 3
   disable: 2
   canBeAttacked: 0
   armorClass: 4

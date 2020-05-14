@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Summoning Rune
   level: 1
-  stealth: 4
+  stealth: 2
   disable: 1
   canBeAttacked: 0
   armorClass: 7

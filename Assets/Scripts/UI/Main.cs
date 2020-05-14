@@ -9,20 +9,19 @@ using UnityEngine.UI;
 public class Main : MonoBehaviour
 {
 	// Start is called before the first frame update
+	private int diffSetting;
 	public Dropdown diffDropdown;
-	public Dropdown levelDropdown;
-	public Dropdown[] dropdowns;
 	public GameObject[] resultWindow;
 	public GradientAsset gradient;
 	public GameObject legend;
-	private int diffSetting;
-	private int levelSetting;
 	public static Main instance;
 	public GameObject tooltip;
 	public ItemBonusMode itemBonusMode = ItemBonusMode.ITEM;
 	private Character[] allChar;
 	private Monster[] allMons;
 	private Hazard[] allHaz;
+	public List<Dropdown.OptionData> levelOpts;
+	public List<Dropdown.OptionData> classOpts;
 
 	void Start() {
 		instance = this;
@@ -30,43 +29,22 @@ public class Main : MonoBehaviour
 		allMons = Resources.LoadAll<Monster>("specific_monsters");
 		allHaz = Resources.LoadAll<Hazard>("hazards");
 		List<int> availLevels = new List<int>();
-		List<Dropdown.OptionData> opts;
-		for(int i = 0; i < dropdowns.Length; i++) {
-			int j = i;
-			Dropdown dd = dropdowns[i];
-			opts = new List<Dropdown.OptionData>();
-			foreach(Character c in allChar) {
-				if(!opts.Any(ooo => ooo.text == c.name)) {
-					Dropdown.OptionData opt = new Dropdown.OptionData(c.name);
-					opts.Add(opt);
-				}
-				if(!availLevels.Contains(c.level)) {
-					availLevels.Add(c.level);
-				}
+		classOpts = new List<Dropdown.OptionData>();
+		foreach(Character c in allChar) {
+			if(!classOpts.Any(ooo => ooo.text == c.name)) {
+				Dropdown.OptionData opt = new Dropdown.OptionData(c.name);
+				classOpts.Add(opt);
 			}
-			dd.AddOptions(opts);
-			dd.onValueChanged.AddListener(v => {
-				if(v == 0) {
-					ClearWindow(resultWindow[j]);
-					return;
-				}
-				if(Test(GetCharacter(dd.options[v].text, levelSetting), resultWindow[j])) {
-					dd.SetValueWithoutNotify(0);
-					ClearWindow(resultWindow[j]);
-				}
-			});
+			if(!availLevels.Contains(c.level)) {
+				availLevels.Add(c.level);
+			}
 		}
-		opts = new List<Dropdown.OptionData>();
+		levelOpts = new List<Dropdown.OptionData>();
 		availLevels.Sort();
 		foreach(int lv in availLevels) {
-			opts.Add(new Dropdown.OptionData(lv.ToString()));
+			levelOpts.Add(new Dropdown.OptionData(lv.ToString()));
 		}
-		levelDropdown.AddOptions(opts);
-		levelDropdown.onValueChanged.AddListener(v => {
-			int ll = 0;
-			int.TryParse(levelDropdown.options[v].text, out ll);
-			levelSetting = ll;
-		});
+		
 		diffDropdown.onValueChanged.AddListener(v => {
 			diffSetting = v;
 		});
@@ -76,50 +54,55 @@ public class Main : MonoBehaviour
 		legend.transform.Find("Hover2").GetComponent<Image>().AddHover(p => {
 			ShowTooltip(legend.transform.position + new Vector3(-50, -100, 0), "Black: Critical Failure\nRed: Failure\nGreen: Success\nBlue: Critical Success\nBlend: Some mixture.", 4, 1, false);
 		});
-	}
-
-	private Character GetCharacter(string className, int levelSetting) {
-		return allChar.FirstOrDefault(chr => chr.name == className && chr.level == levelSetting);
-	}
-
-	private void ClearWindow(GameObject window) {
-		window.transform.Find("ClassLevel").GetComponent<Text>().text = "";
-		Color[] cols = new Color[20];
-		for(int i = 0; i < 20; i++) {
-			cols[i] = Color.white;
+		int ext = 0;
+		int high = 0;
+		int mod = 0;
+		int low = 0;
+		int ter = 0;
+		foreach(Monster mon in allMons) {
+			foreach(MStatAttr atr in Enum.GetValues(typeof(MStatAttr))) {
+				MTEML teml = mon.GetAttribute(atr);
+				switch(teml) {
+					case MTEML.TERRIBLE:
+					case MTEML.THE_WORST:
+						ter++;
+						break;
+					case MTEML.LOW:
+						low++;
+						break;
+					case MTEML.MODERATE:
+						mod++;
+						break;
+					case MTEML.HIGH:
+						high++;
+						break;
+					case MTEML.JUST_BONKERS:
+					case MTEML.EXTREME:
+						ext++;
+						break;
+				}
+			}
 		}
-		BreakdownBar bar = window.transform.Find("Attack").GetComponentInChildren<BreakdownBar>();
-		bar.SetBitColors(cols);
-		bar = window.transform.Find("Abilities").GetComponentInChildren<BreakdownBar>();
-		bar.SetBitColors(cols);
-		bar = window.transform.Find("Fort").GetComponentInChildren<BreakdownBar>();
-		bar.SetBitColors(cols);
-		bar = window.transform.Find("Refx").GetComponentInChildren<BreakdownBar>();
-		bar.SetBitColors(cols);
-		bar = window.transform.Find("Will").GetComponentInChildren<BreakdownBar>();
-		bar.SetBitColors(cols);
-		bar = window.transform.Find("Armor").GetComponentInChildren<BreakdownBar>();
-		bar.SetBitColors(cols);
-		bar = window.transform.Find("Perception").GetComponentInChildren<BreakdownBar>();
-		bar.SetBitColors(cols);
-		bar = window.transform.Find("Skill1").GetComponentInChildren<BreakdownBar>();
-		bar.SetBitColors(cols);
-		bar = window.transform.Find("Skill2").GetComponentInChildren<BreakdownBar>();
-		bar.SetBitColors(cols);
-		bar = window.transform.Find("Skill3").GetComponentInChildren<BreakdownBar>();
-		bar.SetBitColors(cols);
+		Debug.Log("Monsters, ter: " + ter);
+		Debug.Log("Monsters, low: " + low);
+		Debug.Log("Monsters, mod: " + mod);
+		Debug.Log("Monsters, high: " + high);
+		Debug.Log("Monsters, ext: " + ext);
 	}
 
-	private bool Test(Character character, GameObject window) {
+	public static Character GetCharacter(string className, int levelSetting) {
+		return instance.allChar.FirstOrDefault(chr => chr.name == className && chr.level == levelSetting);
+	}
+
+	public bool Test(Character character, ResultWindow window) {
 		if(character == null) return true;
-		int minLv, maxLv;
-		GetDifficultyLevel(character.level, diffSetting, out minLv, out maxLv);
+		GetDifficultyLevel(character.level, diffSetting, out int minLv, out int maxLv);
 		if(maxLv < -5) return true;
 		StatisticsResults result = ComputeStatistics(character, allMons, minLv, maxLv, itemBonusMode);
 		result = ComputeStatistics(character, allHaz, minLv, maxLv, result, itemBonusMode);
 		CalcStatsForSkills(character, minLv, maxLv, result, itemBonusMode);
 		window.transform.Find("ClassLevel").GetComponent<Text>().text = character.name + " " + character.level + " (" + diffDropdown.options[diffSetting].text + ")";
-		DisplayResult(result, window);
+		window.DisplayResult(result, gradient);
 		return false;
 	}
 
@@ -182,131 +165,18 @@ public class Main : MonoBehaviour
 		}
 	}
 
-	private void DisplayResult(StatisticsResults result, GameObject window) {
-		BreakdownBar bar = window.transform.Find("Attack").GetComponentInChildren<BreakdownBar>();
-		Color[] cols = new Color[20];
-		for(int i = 0; i < 20; i++) {
-			if(result.attacktot > 0) {
-				float v = (result.attack[i] / 3f) / result.attacktot;
-				cols[i] = gradient.gradient.Evaluate(v);
-			}
-			else {
-				cols[i] = new Color(.5f, .5f, .5f, 1);
-			}
-		}
-		bar.SetBitColors(cols);
-		bar = window.transform.Find("Abilities").GetComponentInChildren<BreakdownBar>();
-		cols = new Color[20];
-		for(int i = 0; i < 20; i++) {
-			if(result.spellDCtot > 0) {
-				float v = (result.classSpellDC[i] / 3f) / result.spellDCtot;
-				cols[i] = gradient.gradient.Evaluate(1 - v);
-			}
-			else {
-				cols[i] = new Color(.5f, .5f, .5f, 1);
-			}
-		}
-		bar.SetBitColors(cols);
-		bar = window.transform.Find("Fort").GetComponentInChildren<BreakdownBar>();
-		cols = new Color[20];
-		for(int i = 0; i < 20; i++) {
-			if(result.forttot > 0) {
-				float v = (result.fort[i] / 3f) / result.forttot;
-				cols[i] = gradient.gradient.Evaluate(v);
-			}
-			else {
-				cols[i] = new Color(.5f, .5f, .5f, 1);
-			}
-		}
-		bar.SetBitColors(cols);
-		bar = window.transform.Find("Refx").GetComponentInChildren<BreakdownBar>();
-		cols = new Color[20];
-		for(int i = 0; i < 20; i++) {
-			if(result.refxtot > 0) {
-				float v = (result.refx[i] / 3f) / result.refxtot;
-				cols[i] = gradient.gradient.Evaluate(v);
-			}
-			else {
-				cols[i] = new Color(.5f, .5f, .5f, 1);
-			}
-		}
-		bar.SetBitColors(cols);
-		bar = window.transform.Find("Will").GetComponentInChildren<BreakdownBar>();
-		cols = new Color[20];
-		for(int i = 0; i < 20; i++) {
-			if(result.willtot > 0) {
-				float v = (result.will[i] / 3f) / result.willtot;
-				cols[i] = gradient.gradient.Evaluate(v);
-			}
-			else {
-				cols[i] = new Color(.5f, .5f, .5f, 1);
-			}
-		}
-		bar.SetBitColors(cols);
-		bar = window.transform.Find("Armor").GetComponentInChildren<BreakdownBar>();
-		cols = new Color[20];
-		for(int i = 0; i < 20; i++) {
-			if(result.armortot > 0) {
-				float v = (result.armorClass[i] / 3f) / result.armortot;
-				cols[i] = gradient.gradient.Evaluate(1 - v);
-			}
-			else {
-				cols[i] = new Color(.5f, .5f, .5f, 1);
-			}
-		}
-		bar.SetBitColors(cols);
-		bar = window.transform.Find("Perception").GetComponentInChildren<BreakdownBar>();
-		cols = new Color[20];
-		for(int i = 0; i < 20; i++) {
-			if(result.perceptiontot > 0) {
-				float v = (result.perception[i] / 3f) / (result.perceptiontot);
-				cols[i] = gradient.gradient.Evaluate(v);
-			}
-			else {
-				cols[i] = new Color(.5f, .5f, .5f, 1);
-			}
-		}
-		bar.SetBitColors(cols);
-		bar = window.transform.Find("Skill1").GetComponentInChildren<BreakdownBar>();
-		cols = new Color[20];
-		for(int i = 0; i < 20; i++) {
-			if(result.totSkills > 0) {
-				float v = (result.skillSpecialist[i] / 3f) / (result.totSkills);
-				cols[i] = gradient.gradient.Evaluate(v);
-			}
-			else {
-				cols[i] = new Color(.5f, .5f, .5f, 1);
-			}
-		}
-		bar.SetBitColors(cols);
-		bar = window.transform.Find("Skill2").GetComponentInChildren<BreakdownBar>();
-		cols = new Color[20];
-		for(int i = 0; i < 20; i++) {
-			if(result.totSkills > 0) {
-				float v = (result.skillDecent[i] / 3f) / (result.totSkills);
-				cols[i] = gradient.gradient.Evaluate(v);
-			}
-			else {
-				cols[i] = new Color(.5f, .5f, .5f, 1);
-			}
-		}
-		bar.SetBitColors(cols);
-		bar = window.transform.Find("Skill3").GetComponentInChildren<BreakdownBar>();
-		cols = new Color[20];
-		for(int i = 0; i < 20; i++) {
-			if(result.totSkills > 0) {
-				float v = (result.skillDabbler[i] / 3f) / (result.totSkills);
-				cols[i] = gradient.gradient.Evaluate(v);
-			}
-			else {
-				cols[i] = new Color(.5f, .5f, .5f, 1);
-			}
-		}
-		bar.SetBitColors(cols);
-	}
-
 	public static StatisticsResults ComputeStatistics(Character character, Monster[] allMons, int minlvl, int maxlvl, ItemBonusMode mode) {
 		StatisticsResults result = new StatisticsResults();
+		result.attack[21]= 20;
+		result.armorClass[21]= 20;
+		result.classSpellDC[21]= 20;
+		result.perception[21]= 20;
+		result.fort[21]= 20;
+		result.refx[21]= 20;
+		result.will[21]= 20;
+		result.skillSpecialist[21]= 20;
+		result.skillDecent[21]= 20;
+		result.skillDabbler[21]= 20;
 		foreach(Monster m in allMons) {
 			if(m.level >= minlvl && m.level <= maxlvl)
 				CalcStatsForPair(character, m, result, mode);
@@ -333,6 +203,7 @@ public class Main : MonoBehaviour
 					result.perception[i - 1] += (int)RollResult.SUCCESS;
 				}
 				else {
+					if(result.perception[20] < i) result.perception[20] = i;
 					result.perception[i - 1] += (int)RollResult.FAIL;
 				}
 			}
@@ -341,20 +212,20 @@ public class Main : MonoBehaviour
 			skil = Character.GetStatValue(chr, maxTeml, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_BEST);
 			//diff = 14 + level + (level / 3);
 			for(int i = 1; i <= 20; i++) {
-				result.skillSpecialist[i - 1] += GetRollResult(i, skil, diff, SaveIncrease.NONE);
+				result.skillSpecialist[i - 1] += GetRollResult(i, skil, diff, SaveIncrease.NONE, ref result.skillSpecialist[20], ref result.skillSpecialist[21]);
 			}
 			maxTeml = GetBestTeml(chr, chr.level / 2);
 			skillStat = GetBestSkillStat(chr, 1);
 			skil = Character.GetStatValue(chr, maxTeml, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_DECENT);
 			//diff = 14 + level + (level / 3);
 			for(int i = 1; i <= 20; i++) {
-				result.skillDecent[i - 1] += GetRollResult(i, skil, diff, SaveIncrease.NONE);
+				result.skillDecent[i - 1] += GetRollResult(i, skil, diff, SaveIncrease.NONE, ref result.skillDecent[20], ref result.skillDecent[21]);
 			}
 			skillStat = GetBestSkillStat(chr, 3);
 			skil = Character.GetStatValue(chr, TEML.TRAINED, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_LOWEST);
 			//diff = 14 + level + (level / 3);
 			for(int i = 1; i <= 20; i++) {
-				result.skillDabbler[i - 1] += GetRollResult(i, skil, diff, SaveIncrease.NONE);
+				result.skillDabbler[i - 1] += GetRollResult(i, skil, diff, SaveIncrease.NONE, ref result.skillDabbler[20], ref result.skillDabbler[21]);
 			}
 		}
 	}
@@ -418,11 +289,12 @@ public class Main : MonoBehaviour
 					int skil = (skil1 + skil2) / 2;
 
 					diff = 14 + mon.level + (mon.level / 3) + (mon.level >= 5 ? (mon.level >= 23 ? (mon.level >= 25 ? 3 : 2) : 1) : 0);
-					if(GetRollResult(s, skil, diff, SaveIncrease.NONE) >= (chr.attackBoost.HasFlag(SaveIncrease.MASTER_MONSTER_HUNTER) ? 2 : 1)) {
-						total += GetRollResult(i, off + monsterHunter, def, chr.attackBoost);
+					float a = 0, b = 0;
+					if(GetRollResult(s, skil, diff, SaveIncrease.NONE, ref a, ref b) >= (chr.attackBoost.HasFlag(SaveIncrease.MASTER_MONSTER_HUNTER) ? 2 : 1)) {
+						total += GetRollResult(i, off + monsterHunter, def, chr.attackBoost, ref result.attack[20], ref result.attack[21]);
 					}
 					else {
-						total += GetRollResult(i, off, def, chr.attackBoost);
+						total += GetRollResult(i, off, def, chr.attackBoost, ref result.attack[20], ref result.attack[21]);
 					}
 				}
 				result.attack[i - 1] += total/20f;
@@ -430,7 +302,8 @@ public class Main : MonoBehaviour
 		}
 		else {
 			for(int i = 1; i <= 20; i++) {
-				result.attack[i - 1] += GetRollResult(i, off, def, chr.attackBoost);
+				float r = GetRollResult(i, off, def, chr.attackBoost, ref result.attack[20], ref result.attack[21]);
+				result.attack[i - 1] += r;
 			}
 		}
 		int sdc;
@@ -448,21 +321,21 @@ public class Main : MonoBehaviour
 			result.spellDCtot++;
 			sve = Monster.GetSavingThrow(mon.fort, mon.level);
 			for(int i = 1; i <= 20; i++) {
-				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE);
+				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
 			}
 		}
 		if(chr.canAffectsSaves.HasFlag(AffectType.REFX)) {
 			result.spellDCtot++;
 			sve = Monster.GetSavingThrow(mon.refx, mon.level);
 			for(int i = 1; i <= 20; i++) {
-				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE);
+				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
 			}
 		}
 		if(chr.canAffectsSaves.HasFlag(AffectType.WILL)) {
 			result.spellDCtot++;
 			sve = Monster.GetSavingThrow(mon.will, mon.level);
 			for(int i = 1; i <= 20; i++) {
-				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE);
+				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
 			}
 		}
 		if(mon.canAffectsSaves.HasFlag(AffectType.FORT) || mon.canAffectsSaves.HasFlag(AffectType.FORT_LIVING)) {
@@ -470,7 +343,7 @@ public class Main : MonoBehaviour
 			sdc = Monster.GetAbilityDC(mon.abilitySaveDC, mon.level);
 			result.forttot++;
 			for(int i = 1; i <= 20; i++) {
-				result.fort[i - 1] += GetRollResult(i, sve, sdc, chr.fortSaveBoost);
+				result.fort[i - 1] += GetRollResult(i, sve, sdc, chr.fortSaveBoost, ref result.fort[20], ref result.fort[21]);
 			}
 		}
 		if(mon.canAffectsSaves.HasFlag(AffectType.REFX)) {
@@ -478,7 +351,7 @@ public class Main : MonoBehaviour
 			sdc = Monster.GetAbilityDC(mon.abilitySaveDC, mon.level);
 			result.refxtot++;
 			for(int i = 1; i <= 20; i++) {
-				result.refx[i - 1] += GetRollResult(i, sve, sdc, chr.refxSaveBoost);
+				result.refx[i - 1] += GetRollResult(i, sve, sdc, chr.refxSaveBoost, ref result.refx[20], ref result.refx[21]);
 			}
 		}
 		if(mon.canAffectsSaves.HasFlag(AffectType.WILL)) {
@@ -486,7 +359,7 @@ public class Main : MonoBehaviour
 			sdc = Monster.GetAbilityDC(mon.abilitySaveDC, mon.level);
 			result.willtot++;
 			for(int i = 1; i <= 20; i++) {
-				result.will[i - 1] += GetRollResult(i, sve, sdc, chr.willSaveBoost);
+				result.will[i - 1] += GetRollResult(i, sve, sdc, chr.willSaveBoost, ref result.will[20], ref result.will[21]);
 			}
 		}
 		if(mon.attacks != MTEML.NONE) {
@@ -496,8 +369,8 @@ public class Main : MonoBehaviour
 			def += b;
 			result.armortot++;
 			for(int i = 1; i <= 20; i++) {
-				result.armorClass[i - 1] += GetRollResult(i, off, def, chr.defenseBoost) / 2;
-				result.armorClass[i - 1] += GetRollResult(i, off, def + chr.shieldBonus, chr.defenseBoost) / 2;
+				result.armorClass[i - 1] += GetRollResult(i, off, def, chr.defenseBoost, ref result.armorClass[20], ref result.armorClass[21]) / 2;
+				result.armorClass[i - 1] += GetRollResult(i, off, def + chr.shieldBonus, chr.defenseBoost, ref result.armorClass[20], ref result.armorClass[21]) / 2;
 			}
 		}
 		if(mon.stealth != MTEML.NONE) {
@@ -509,6 +382,7 @@ public class Main : MonoBehaviour
 					result.perception[i - 1] += (int)RollResult.SUCCESS;
 				}
 				else {
+					if(result.perception[20] < i) result.perception[20] = i;
 					result.perception[i - 1] += (int)RollResult.FAIL;
 				}
 			}
@@ -535,7 +409,7 @@ public class Main : MonoBehaviour
 			def = Hazard.GetArmorClass(haz.armorClass, haz.level);
 			result.attacktot++;
 			for(int i = 1; i <= 20; i++) {
-				result.attack[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE);
+				result.attack[i - 1] += GetRollResult(i, off, def, chr.attackBoost, ref result.attack[20], ref result.attack[21]);
 			}
 		}
 		if(haz.usesAttack) {
@@ -543,7 +417,7 @@ public class Main : MonoBehaviour
 			def = Character.GetArmorClass(chr, chr.armorClass, StatAttr.DEX, mode) + 10 + Character.GetItemBonus(chr, mode, chr.armorType == ArmorType.HEAVY ? ItemBonusType.HEAVY_ARMOR : ItemBonusType.ARMOR) + hazardFinder;
 			result.armortot++;
 			for(int i = 1; i <= 20; i++) {
-				result.armorClass[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE);
+				result.armorClass[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE, ref result.armorClass[20], ref result.armorClass[21]);
 			}
 		}
 		if(haz.usesSavingThrow) {
@@ -552,7 +426,7 @@ public class Main : MonoBehaviour
 				sdc = Hazard.GetSaveDC(haz.effectDifficultyClass, haz.level);
 				result.forttot++;
 				for(int i = 1; i <= 20; i++) {
-					result.fort[i - 1] += GetRollResult(i, sve, sdc, chr.fortSaveBoost);
+					result.fort[i - 1] += GetRollResult(i, sve, sdc, chr.fortSaveBoost, ref result.fort[20], ref result.fort[21]);
 				}
 			}
 			if(haz.canAffectsSaves.HasFlag(AffectType.REFX)) {
@@ -560,7 +434,7 @@ public class Main : MonoBehaviour
 				sdc = Hazard.GetSaveDC(haz.effectDifficultyClass, haz.level);
 				result.refxtot++;
 				for(int i = 1; i <= 20; i++) {
-					result.refx[i - 1] += GetRollResult(i, sve, sdc, chr.refxSaveBoost);
+					result.refx[i - 1] += GetRollResult(i, sve, sdc, chr.refxSaveBoost, ref result.refx[20], ref result.refx[21]);
 				}
 			}
 			if(haz.canAffectsSaves.HasFlag(AffectType.WILL)) {
@@ -568,7 +442,7 @@ public class Main : MonoBehaviour
 				sdc = Hazard.GetSaveDC(haz.effectDifficultyClass, haz.level);
 				result.willtot++;
 				for(int i = 1; i <= 20; i++) {
-					result.will[i - 1] += GetRollResult(i, sve, sdc, chr.willSaveBoost);
+					result.will[i - 1] += GetRollResult(i, sve, sdc, chr.willSaveBoost, ref result.will[20], ref result.will[21]);
 				}
 			}
 		}
@@ -576,14 +450,14 @@ public class Main : MonoBehaviour
 			result.spellDCtot++;
 			sve = Hazard.GetFortReflexBonus(haz.fortSave, haz.level);
 			for(int i = 1; i <= 20; i++) {
-				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE);
+				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
 			}
 		}
 		if(haz.canBeAttacked && chr.canAffectsSaves.HasFlag(AffectType.REFX)) {
 			result.spellDCtot++;
 			sve = Hazard.GetFortReflexBonus(haz.refxSave, haz.level);
 			for(int i = 1; i <= 20; i++) {
-				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE);
+				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
 			}
 		}
 		result.totSkills++;
@@ -591,17 +465,17 @@ public class Main : MonoBehaviour
 		off = Character.GetSkillValue(chr, GetBestTeml(chr, chr.level), skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_BEST);
 		def = Hazard.GetSkillDC(haz.disable, haz.level);
 		for(int i = 1; i <= 20; i++) {
-			result.skillSpecialist[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE);
+			result.skillSpecialist[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE, ref result.skillSpecialist[20], ref result.skillSpecialist[21]);
 		}
 		skillStat = GetBestSkillStat(chr, 1);
 		off = Character.GetSkillValue(chr, GetBestTeml(chr, chr.level - 7), skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_DECENT);
 		for(int i = 1; i <= 20; i++) {
-			result.skillDecent[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE);
+			result.skillDecent[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE, ref result.skillDecent[20], ref result.skillDecent[21]);
 		}
 		skillStat = GetBestSkillStat(chr, 3);
 		off = Character.GetSkillValue(chr, TEML.TRAINED, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_LOWEST);
 		for(int i = 1; i <= 20; i++) {
-			result.skillDabbler[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE);
+			result.skillDabbler[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE, ref result.skillDabbler[20], ref result.skillDabbler[21]);
 		}
 		int skil = Character.GetStatValue(chr, chr.perception, StatAttr.WIS, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.PERCEPTION) + hazardFinder;
 		int diff = Hazard.GetSkillDC(haz.stealth, haz.level);
@@ -611,133 +485,140 @@ public class Main : MonoBehaviour
 				result.perception[i - 1] += (int)RollResult.SUCCESS;
 			}
 			else {
+				if(result.perception[20] < i) result.perception[20] = i;
 				result.perception[i - 1] += (int)RollResult.FAIL;
 			}
 		}
 	}
 
-	private static float GetRollResult(int i, int off, int def, SaveIncrease saveBoost) {
+	private static float GetRollResult(int i, int off, int def, SaveIncrease saveBoost, ref float maxMiss, ref float minCrit) {
 		if(saveBoost.HasFlag(SaveIncrease.MINIMUM_10)) {
 			i = Math.Max(i, 10);
 		}
 		if(i == 1) {
 			if(saveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-				return GetRerollResult(RollResult.FAIL, off, def, saveBoost);
+				return GetRerollResult(RollResult.FAIL, off, def, i, saveBoost, ref maxMiss, ref minCrit);
 			else
-				return GetRerollResult(RollResult.CRIT_FAIL, off, def, saveBoost);
+				return GetRerollResult(RollResult.CRIT_FAIL, off, def, i, saveBoost, ref maxMiss, ref minCrit);
 		}
 		if(i == 20 || (saveBoost.HasFlag(SaveIncrease.CRIT_ON_19) && i == 19)) {
 			if(off + i >= def) {
-				return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, saveBoost);
+				return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, i, saveBoost, ref maxMiss, ref minCrit);
 			}
 			else if(off + i >= def - 10 && i == 20) {
 				if(saveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-					return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, saveBoost);
+					return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, i, saveBoost, ref maxMiss, ref minCrit);
 				else
-					return GetRerollResult(RollResult.SUCCESS, off, def, saveBoost);
+					return GetRerollResult(RollResult.SUCCESS, off, def, i, saveBoost, ref maxMiss, ref minCrit);
 			}
 			else {
 				if(saveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-					return GetRerollResult(RollResult.SUCCESS, off, def, saveBoost);
+					return GetRerollResult(RollResult.SUCCESS, off, def, i, saveBoost, ref maxMiss, ref minCrit);
 				else
-					return GetRerollResult(RollResult.FAIL, off, def, saveBoost);
+					return GetRerollResult(RollResult.FAIL, off, def, i, saveBoost, ref maxMiss, ref minCrit);
 			}
 		}
 		if(off + i >= def) { //save
 			if(off + i >= def + 10) { //crit
-				return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, saveBoost);
+				return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, i, saveBoost, ref maxMiss, ref minCrit);
 			}
 			else {
 				if(saveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-					return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, saveBoost);
+					return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, i, saveBoost, ref maxMiss, ref minCrit);
 				else
-					return GetRerollResult(RollResult.SUCCESS, off, def, saveBoost);
+					return GetRerollResult(RollResult.SUCCESS, off, def, i, saveBoost, ref maxMiss, ref minCrit);
 			}
 		}
 		else { //fail
 			if(off + i <= def - 10) {
 				if(saveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-					return GetRerollResult(RollResult.FAIL, off, def, saveBoost);
+					return GetRerollResult(RollResult.FAIL, off, def, i, saveBoost, ref maxMiss, ref minCrit);
 				else
-					return GetRerollResult(RollResult.CRIT_FAIL, off, def, saveBoost);
+					return GetRerollResult(RollResult.CRIT_FAIL, off, def, i, saveBoost, ref maxMiss, ref minCrit);
 			}
 			else { //crit
 				if(saveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-					return GetRerollResult(RollResult.SUCCESS, off, def, saveBoost);
+					return GetRerollResult(RollResult.SUCCESS, off, def, i, saveBoost, ref maxMiss, ref minCrit);
 				else
-					return GetRerollResult(RollResult.FAIL, off, def, saveBoost);
+					return GetRerollResult(RollResult.FAIL, off, def, i, saveBoost, ref maxMiss, ref minCrit);
 			}
 		}
 	}
 
-	private static float GetRerollResult(RollResult baseResult, int off, int def, SaveIncrease saveBoost) {
+	private static float GetRerollResult(RollResult baseResult, int off, int def, int roll, SaveIncrease saveBoost, ref float maxMiss, ref float minCrit) {
+		if(baseResult < RollResult.SUCCESS && maxMiss < roll) {
+			maxMiss = roll;
+		}
+		if(baseResult > RollResult.SUCCESS && minCrit > roll) {
+			minCrit = roll;
+		}
 		float total = 0;
 		if((saveBoost.HasFlag(SaveIncrease.REROLL_FAILURE_PLUS_2) || saveBoost.HasFlag(SaveIncrease.REROLL_FAILURE)) && baseResult == RollResult.FAIL) {
 			total = RollSimpleSave(baseResult, off+(saveBoost.HasFlag(SaveIncrease.REROLL_FAILURE_PLUS_2) ? 2 : 0), def, saveBoost, (int)RollResult.FAIL);
 			return ((int)baseResult * 3 + (total / 20)) / 4;
 		}
 		if((saveBoost.HasFlag(SaveIncrease.REROLL_CRITICAL_FAILURE_PLUS_2) || saveBoost.HasFlag(SaveIncrease.REROLL_CRITICAL_FAILURE)) && baseResult == RollResult.CRIT_FAIL) {
-			total = RollSimpleSave(baseResult, off+ (saveBoost.HasFlag(SaveIncrease.REROLL_CRITICAL_FAILURE_PLUS_2) ? 2 : 0), def, saveBoost, (int)RollResult.CRIT_FAIL);
+			total = RollSimpleSave(baseResult, off+ (saveBoost.HasFlag(SaveIncrease.REROLL_CRITICAL_FAILURE_PLUS_2) ? 2 : 0), def, saveBoost);
 			return ((int)baseResult * 3 + (total / 20)) / 4;
 		}
 		if(saveBoost.HasFlag(SaveIncrease.DISADVANTAGE) && baseResult == RollResult.SUCCESS) {
-			total = RollSimpleSave(baseResult, off, def, saveBoost, (int)RollResult.CRIT_FAIL);
+			total = RollSimpleSave(baseResult, off, def, saveBoost, (int)RollResult.CRIT_FAIL, (int)baseResult);
 			return Math.Min(total, (int)baseResult);
 		}
 		return (int)baseResult;
 	}
 
-	private static float RollSimpleSave(RollResult baseResult, int off, int def, SaveIncrease saveBoost, int minimumResult) {
+	private static float RollSimpleSave(RollResult baseResult, int off, int def, SaveIncrease saveBoost, int minimumResult = 0, int maximumResult = 3) {
 		float total = 0;
 		for(int i = 1; i <= 20; i++) {
 			if(i == 1) {
 				if(saveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-					total += Math.Max((int)RollResult.FAIL, minimumResult);
+					total += Math.Max(Math.Min((int)RollResult.FAIL, maximumResult), minimumResult);
 				else
-					total += Math.Max((int)RollResult.CRIT_FAIL, minimumResult);
+					total += Math.Max(Math.Min((int)RollResult.CRIT_FAIL, maximumResult), minimumResult);
 				continue;
 			}
 			if(i == 20) {
 				if(off + i >= def) {
-					total += Math.Max((int)RollResult.CRIT_SUCCESS, minimumResult);
+					total += Math.Max(Math.Min((int)RollResult.CRIT_SUCCESS, maximumResult), minimumResult);
 				}
 				else if(off + i >= def - 10) {
 					if(saveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-						total += Math.Max((int)RollResult.CRIT_SUCCESS, minimumResult);
+						total += Math.Max(Math.Min((int)RollResult.CRIT_SUCCESS, maximumResult), minimumResult);
 					else
-						total += Math.Max((int)RollResult.SUCCESS, minimumResult);
+						total += Math.Max(Math.Min((int)RollResult.SUCCESS, maximumResult), minimumResult);
 				}
 				else {
 					if(saveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-						total += Math.Max((int)RollResult.SUCCESS, minimumResult);
+						total += Math.Max(Math.Min((int)RollResult.SUCCESS, maximumResult), minimumResult);
 					else
-						total += Math.Max((int)RollResult.FAIL, minimumResult);
+						total += Math.Max(Math.Min((int)RollResult.FAIL, maximumResult), minimumResult);
 				}
 				continue;
 			}
 			if(off + i >= def) { //save
 				if(off + i >= def + 10) { //crit
-					total += Math.Max((int)RollResult.CRIT_SUCCESS, minimumResult);
+					total += Math.Max(Math.Min((int)RollResult.CRIT_SUCCESS, maximumResult), minimumResult);
 				}
 				else {
 					if(saveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-						total += Math.Max((int)RollResult.CRIT_SUCCESS, minimumResult);
+						total += Math.Max(Math.Min((int)RollResult.CRIT_SUCCESS, maximumResult), minimumResult);
 					else
-						total += Math.Max((int)RollResult.SUCCESS, minimumResult);
+						total += Math.Max(Math.Min((int)RollResult.SUCCESS, maximumResult), minimumResult);
 				}
 			}
 			else { //fail
 				if(off + i <= def - 10) {
 					if(saveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-						total += Math.Max((int)RollResult.FAIL, minimumResult);
+						total += Math.Max(Math.Min((int)RollResult.FAIL, maximumResult), minimumResult);
 					else
-						total += Math.Max((int)RollResult.CRIT_FAIL, minimumResult);
+						total += Math.Max(Math.Min((int)RollResult.CRIT_FAIL, maximumResult), minimumResult);
 				}
 				else { //crit
 					if(saveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-						total += Math.Max((int)RollResult.SUCCESS, minimumResult);
+						total += Math.Max(Math.Min((int)RollResult.SUCCESS, maximumResult), minimumResult);
 					else
-						total += Math.Max((int)RollResult.FAIL, minimumResult);
+						total += Math.Max(Math.Min((int)RollResult.FAIL, maximumResult), minimumResult);
 				}
 			}
 		}

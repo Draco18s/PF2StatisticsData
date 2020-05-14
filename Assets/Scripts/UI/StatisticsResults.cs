@@ -19,15 +19,15 @@
 	public int totSkills;
 
 	public StatisticsResults() {
-		attack = new float[20];
-		armorClass = new float[20];
-		classSpellDC = new float[20];
-		perception = new float[20];
-		fort = new float[20];
-		refx = new float[20];
-		will = new float[20];
-		skillSpecialist = new float[20];
-		skillDecent = new float[20];
-		skillDabbler = new float[20];
+		attack = new float[22];
+		armorClass = new float[22];
+		classSpellDC = new float[22];
+		perception = new float[22];
+		fort = new float[22];
+		refx = new float[22];
+		will = new float[22];
+		skillSpecialist = new float[22];
+		skillDecent = new float[22];
+		skillDabbler = new float[22];
 	}
 }

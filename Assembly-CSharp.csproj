@@ -79,6 +79,7 @@
     <Compile Include="Assets\Scripts\Scriptables\TEML.cs" />
     <Compile Include="Assets\Scripts\UI\BreakdownBar.cs" />
     <Compile Include="Assets\Scripts\UI\Main.cs" />
+    <Compile Include="Assets\Scripts\UI\ResultWindow.cs" />
     <Compile Include="Assets\Scripts\UI\RollResult.cs" />
     <Compile Include="Assets\Scripts\UI\SelectObject.cs" />
     <Compile Include="Assets\Scripts\UI\StatisticsResults.cs" />
