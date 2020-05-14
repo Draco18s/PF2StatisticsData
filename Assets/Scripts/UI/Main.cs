@@ -13,6 +13,7 @@ public class Main : MonoBehaviour
 	public Dropdown diffDropdown;
 	public GameObject[] resultWindow;
 	public GradientAsset gradient;
+	public GradientAsset[] gradients;
 	public GameObject legend;
 	public static Main instance;
 	public GameObject tooltip;
@@ -54,6 +55,23 @@ public class Main : MonoBehaviour
 		legend.transform.Find("Hover2").GetComponent<Image>().AddHover(p => {
 			ShowTooltip(legend.transform.position + new Vector3(-50, -100, 0), "Black: Critical Failure\nRed: Failure\nGreen: Success\nBlue: Critical Success\nBlend: Some mixture.", 4, 1, false);
 		});
+		Color[] col = new Color[20];
+		for(int i=0;i<20;i++) {
+			col[i] = gradient.gradient.Evaluate((float)i / 19);
+		}
+		legend.GetComponentInChildren<BreakdownBar>().SetBitColors(col);
+		legend.GetComponentInChildren<Dropdown>().onValueChanged.AddListener(v => {
+			gradient = gradients[v];
+			Color[] cols = new Color[20];
+			for(int i = 0; i < 20; i++) {
+				cols[i] = gradient.gradient.Evaluate((float)i / 19);
+			}
+			legend.GetComponentInChildren<BreakdownBar>().SetBitColors(cols);
+			foreach(GameObject window in resultWindow) {
+				window.GetComponent<ResultWindow>().RefreshColor();
+			}
+		});
+		//legend.GetComponentInChildren<BreakdownBar>().SetNotches(-1, -1);
 		int ext = 0;
 		int high = 0;
 		int mod = 0;

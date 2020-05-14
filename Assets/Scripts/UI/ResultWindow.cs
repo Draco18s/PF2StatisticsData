@@ -8,6 +8,7 @@ public class ResultWindow : MonoBehaviour {
 	private int levelSetting;
 	public Dropdown classDropdown;
 	public Dropdown levelDropdown;
+	private StatisticsResults lastResult;
 
 	void Start() {
 		levelDropdown.AddOptions(Main.instance.levelOpts);
@@ -72,9 +73,12 @@ public class ResultWindow : MonoBehaviour {
 		bar = window.transform.Find("Skill3").GetComponentInChildren<BreakdownBar>();
 		bar.SetBitColors(cols);
 		bar.SetNotches(-1, -1);
+		window.GetComponent<ResultWindow>().lastResult = null;
 	}
 
 	public void DisplayResult(StatisticsResults result, GradientAsset gradient) {
+		lastResult = result;
+		if(result == null) return;
 		BreakdownBar bar = transform.Find("Attack").GetComponentInChildren<BreakdownBar>();
 		Color[] cols = new Color[20];
 		for(int i = 0; i < 20; i++) {
@@ -215,5 +219,9 @@ public class ResultWindow : MonoBehaviour {
 		}
 		bar.SetBitColors(cols);
 		bar.SetNotches((int)result.skillDabbler[20], (int)result.skillDabbler[21]);
+	}
+
+	public void RefreshColor() {
+		DisplayResult(lastResult, Main.instance.gradient);
 	}
 }
