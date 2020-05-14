@@ -22,6 +22,7 @@ public class ResultWindow : MonoBehaviour {
 			classSetting = v;
 			UpdateWindow();
 		});
+		ClearWindow(gameObject);
 	}
 
 	private void UpdateWindow() {
@@ -43,34 +44,34 @@ public class ResultWindow : MonoBehaviour {
 		}
 		BreakdownBar bar = window.transform.Find("Attack").GetComponentInChildren<BreakdownBar>();
 		bar.SetBitColors(cols);
-		bar.SetNotches(20, 20);
+		bar.SetNotches(-1, -1);
 		bar = window.transform.Find("Abilities").GetComponentInChildren<BreakdownBar>();
 		bar.SetBitColors(cols);
-		bar.SetNotches(20, 20);
+		bar.SetNotches(-1, -1);
 		bar = window.transform.Find("Fort").GetComponentInChildren<BreakdownBar>();
 		bar.SetBitColors(cols);
-		bar.SetNotches(20, 20);
+		bar.SetNotches(-1, -1);
 		bar = window.transform.Find("Refx").GetComponentInChildren<BreakdownBar>();
 		bar.SetBitColors(cols);
-		bar.SetNotches(20, 20);
+		bar.SetNotches(-1, -1);
 		bar = window.transform.Find("Will").GetComponentInChildren<BreakdownBar>();
 		bar.SetBitColors(cols);
-		bar.SetNotches(20, 20);
+		bar.SetNotches(-1, -1);
 		bar = window.transform.Find("Armor").GetComponentInChildren<BreakdownBar>();
 		bar.SetBitColors(cols);
-		bar.SetNotches(20, 20);
+		bar.SetNotches(-1, -1);
 		bar = window.transform.Find("Perception").GetComponentInChildren<BreakdownBar>();
 		bar.SetBitColors(cols);
-		bar.SetNotches(20, 20);
+		bar.SetNotches(-1, -1);
 		bar = window.transform.Find("Skill1").GetComponentInChildren<BreakdownBar>();
 		bar.SetBitColors(cols);
-		bar.SetNotches(20, 20);
+		bar.SetNotches(-1, -1);
 		bar = window.transform.Find("Skill2").GetComponentInChildren<BreakdownBar>();
 		bar.SetBitColors(cols);
-		bar.SetNotches(20, 20);
+		bar.SetNotches(-1, -1);
 		bar = window.transform.Find("Skill3").GetComponentInChildren<BreakdownBar>();
 		bar.SetBitColors(cols);
-		bar.SetNotches(20, 20);
+		bar.SetNotches(-1, -1);
 	}
 
 	public void DisplayResult(StatisticsResults result, GradientAsset gradient) {
