@@ -211,8 +211,9 @@ public class Main : MonoBehaviour
 	}
 
 	private static void CalcStatsForSkills(Character chr, int minLv, int maxLv, StatisticsResults result, ItemBonusMode mode) {
-		int skil = Character.GetStatValue(chr, chr.perception, StatAttr.WIS, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.PERCEPTION);
+		int skil;
 		for(int level = minLv; level <= maxLv; level++) {
+			skil = Character.GetStatValue(chr, chr.perception, StatAttr.WIS, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.PERCEPTION);
 			result.totSkills++;
 			result.perceptiontot++;
 			int diff = 14 + level + (level / 3) + (level >= 5 ? (level >= 23 ? (level >= 25 ? 3 : 2) : 1) : 0);
@@ -230,20 +231,20 @@ public class Main : MonoBehaviour
 			skil = Character.GetStatValue(chr, maxTeml, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_BEST);
 			//diff = 14 + level + (level / 3);
 			for(int i = 1; i <= 20; i++) {
-				result.skillSpecialist[i - 1] += GetRollResult(i, skil, diff, SaveIncrease.NONE, ref result.skillSpecialist[20], ref result.skillSpecialist[21]);
+				result.skillSpecialist[i - 1] += GetRollResult(i, skil, diff, SaveIncrease.NONE, SaveIncrease.NONE, ref result.skillSpecialist[20], ref result.skillSpecialist[21]);
 			}
 			maxTeml = GetBestTeml(chr, chr.level / 2);
 			skillStat = GetBestSkillStat(chr, 1);
 			skil = Character.GetStatValue(chr, maxTeml, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_DECENT);
 			//diff = 14 + level + (level / 3);
 			for(int i = 1; i <= 20; i++) {
-				result.skillDecent[i - 1] += GetRollResult(i, skil, diff, SaveIncrease.NONE, ref result.skillDecent[20], ref result.skillDecent[21]);
+				result.skillDecent[i - 1] += GetRollResult(i, skil, diff, SaveIncrease.NONE, SaveIncrease.NONE, ref result.skillDecent[20], ref result.skillDecent[21]);
 			}
 			skillStat = GetBestSkillStat(chr, 3);
 			skil = Character.GetStatValue(chr, TEML.TRAINED, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_LOWEST);
 			//diff = 14 + level + (level / 3);
 			for(int i = 1; i <= 20; i++) {
-				result.skillDabbler[i - 1] += GetRollResult(i, skil, diff, SaveIncrease.NONE, ref result.skillDabbler[20], ref result.skillDabbler[21]);
+				result.skillDabbler[i - 1] += GetRollResult(i, skil, diff, SaveIncrease.NONE, SaveIncrease.NONE, ref result.skillDabbler[20], ref result.skillDabbler[21]);
 			}
 		}
 	}
@@ -271,11 +272,11 @@ public class Main : MonoBehaviour
 	private static TEML GetBestTeml(Character chr, int level) {
 		int baseSkill = (int)TEML.TRAINED;
 		if(level >= chr.firstSkillIncrease) {
-			baseSkill++;
+			baseSkill += 2;
 			if(level >= 7) {
-				baseSkill++;
+				baseSkill += 2;
 				if(level >= 15) {
-					baseSkill++;
+					baseSkill += 2;
 				}
 			}
 		}
@@ -285,8 +286,8 @@ public class Main : MonoBehaviour
 	private static void CalcStatsForPair(Character chr, Monster mon, StatisticsResults result, ItemBonusMode mode) {
 		int off = Character.GetStatValue(chr, chr.attacks, chr.attackStat, mode)+Character.GetItemBonus(chr,mode,ItemBonusType.WEAPON);
 		int def = Monster.GetArmor(mon.armorClass, mon.level);
-		result.attacktot++;
-
+		result.attacktot+=mon.weight;
+		bool attackIsDex = chr.attackStat == StatAttr.DEX || chr.attackStat == StatAttr.INT || chr.attackStat == StatAttr.WIS || chr.attackStat == StatAttr.CHA;
 		if(chr.attackBoost.HasFlag(SaveIncrease.MONSTER_HUNTER)) {
 			int diff = mon.level - chr.level;
 			int monsterHunter = 1;
@@ -308,11 +309,11 @@ public class Main : MonoBehaviour
 
 					diff = 14 + mon.level + (mon.level / 3) + (mon.level >= 5 ? (mon.level >= 23 ? (mon.level >= 25 ? 3 : 2) : 1) : 0);
 					float a = 0, b = 0;
-					if(GetRollResult(s, skil, diff, SaveIncrease.NONE, ref a, ref b) >= (chr.attackBoost.HasFlag(SaveIncrease.MASTER_MONSTER_HUNTER) ? 2 : 1)) {
-						total += GetRollResult(i, off + monsterHunter, def, chr.attackBoost, ref result.attack[20], ref result.attack[21]);
+					if(GetRollResult(s, skil, diff, SaveIncrease.NONE, attackIsDex ? SaveIncrease.NONE : mon.globalDefenseBoost, ref a, ref b) >= (chr.attackBoost.HasFlag(SaveIncrease.MASTER_MONSTER_HUNTER) ? 2 : 1)) {
+						total += mon.weight * GetRollResult(i, off + monsterHunter, def, chr.attackBoost, attackIsDex ? SaveIncrease.NONE : mon.globalDefenseBoost, ref result.attack[20], ref result.attack[21]);
 					}
 					else {
-						total += GetRollResult(i, off, def, chr.attackBoost, ref result.attack[20], ref result.attack[21]);
+						total += mon.weight * GetRollResult(i, off, def, chr.attackBoost, attackIsDex ? SaveIncrease.NONE : mon.globalDefenseBoost, ref result.attack[20], ref result.attack[21]);
 					}
 				}
 				result.attack[i - 1] += total/20f;
@@ -320,7 +321,7 @@ public class Main : MonoBehaviour
 		}
 		else {
 			for(int i = 1; i <= 20; i++) {
-				float r = GetRollResult(i, off, def, chr.attackBoost, ref result.attack[20], ref result.attack[21]);
+				float r = mon.weight * GetRollResult(i, off, def, chr.attackBoost, attackIsDex ? SaveIncrease.NONE : mon.globalDefenseBoost, ref result.attack[20], ref result.attack[21]);
 				result.attack[i - 1] += r;
 			}
 		}
@@ -336,48 +337,48 @@ public class Main : MonoBehaviour
 			sdc = Character.GetStatValue(chr, chr.classSpellDC, chr.classStat, mode) + 10 + Character.GetItemBonus(chr, mode, ItemBonusType.SPELLDC);
 		}
 		if(chr.canAffectsSaves.HasFlag(AffectType.FORT) || chr.canAffectsSaves.HasFlag(AffectType.FORT_LIVING)) {
-			result.spellDCtot++;
+			result.spellDCtot += mon.weight;
 			sve = Monster.GetSavingThrow(mon.fort, mon.level);
 			for(int i = 1; i <= 20; i++) {
-				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
+				result.classSpellDC[i - 1] += mon.weight * GetRollResult(i, sve, sdc, SaveIncrease.NONE, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
 			}
 		}
 		if(chr.canAffectsSaves.HasFlag(AffectType.REFX)) {
-			result.spellDCtot++;
+			result.spellDCtot += mon.weight;
 			sve = Monster.GetSavingThrow(mon.refx, mon.level);
 			for(int i = 1; i <= 20; i++) {
-				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
+				result.classSpellDC[i - 1] += mon.weight * GetRollResult(i, sve, sdc, SaveIncrease.NONE, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
 			}
 		}
 		if(chr.canAffectsSaves.HasFlag(AffectType.WILL)) {
-			result.spellDCtot++;
+			result.spellDCtot += mon.weight;
 			sve = Monster.GetSavingThrow(mon.will, mon.level);
 			for(int i = 1; i <= 20; i++) {
-				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
+				result.classSpellDC[i - 1] += mon.weight * GetRollResult(i, sve, sdc, SaveIncrease.NONE, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
 			}
 		}
 		if(mon.canAffectsSaves.HasFlag(AffectType.FORT) || mon.canAffectsSaves.HasFlag(AffectType.FORT_LIVING)) {
 			sve = Character.GetStatValue(chr, chr.fort, StatAttr.CON, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SAVING_THROWS);
 			sdc = Monster.GetAbilityDC(mon.abilitySaveDC, mon.level);
-			result.forttot++;
+			result.forttot += mon.weight;
 			for(int i = 1; i <= 20; i++) {
-				result.fort[i - 1] += GetRollResult(i, sve, sdc, chr.fortSaveBoost, ref result.fort[20], ref result.fort[21]);
+				result.fort[i - 1] += mon.weight * GetRollResult(i, sve, sdc, chr.fortSaveBoost, attackIsDex ? SaveIncrease.NONE : mon.globalDefenseBoost, ref result.fort[20], ref result.fort[21]);
 			}
 		}
 		if(mon.canAffectsSaves.HasFlag(AffectType.REFX)) {
-			sve = Character.GetStatValue(chr, chr.refx, StatAttr.DEX, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SAVING_THROWS);
+			sve = Character.GetReflexSave(chr, chr.refx, StatAttr.DEX, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SAVING_THROWS);
 			sdc = Monster.GetAbilityDC(mon.abilitySaveDC, mon.level);
-			result.refxtot++;
+			result.refxtot += mon.weight;
 			for(int i = 1; i <= 20; i++) {
-				result.refx[i - 1] += GetRollResult(i, sve, sdc, chr.refxSaveBoost, ref result.refx[20], ref result.refx[21]);
+				result.refx[i - 1] += mon.weight * GetRollResult(i, sve, sdc, chr.refxSaveBoost, attackIsDex ? SaveIncrease.NONE : mon.globalDefenseBoost, ref result.refx[20], ref result.refx[21]);
 			}
 		}
 		if(mon.canAffectsSaves.HasFlag(AffectType.WILL)) {
 			sve = Character.GetStatValue(chr, chr.will, StatAttr.WIS, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SAVING_THROWS);
 			sdc = Monster.GetAbilityDC(mon.abilitySaveDC, mon.level);
-			result.willtot++;
+			result.willtot += mon.weight;
 			for(int i = 1; i <= 20; i++) {
-				result.will[i - 1] += GetRollResult(i, sve, sdc, chr.willSaveBoost, ref result.will[20], ref result.will[21]);
+				result.will[i - 1] += mon.weight * GetRollResult(i, sve, sdc, chr.willSaveBoost, attackIsDex ? SaveIncrease.NONE : mon.globalDefenseBoost, ref result.will[20], ref result.will[21]);
 			}
 		}
 		if(mon.attacks != MTEML.NONE) {
@@ -385,23 +386,23 @@ public class Main : MonoBehaviour
 			def = Character.GetArmorClass(chr, chr.armorClass, StatAttr.DEX, mode) + 10;
 			int b = Character.GetItemBonus(chr, mode, chr.armorType == ArmorType.HEAVY ? ItemBonusType.HEAVY_ARMOR : ItemBonusType.ARMOR);
 			def += b;
-			result.armortot++;
+			result.armortot += mon.weight;
 			for(int i = 1; i <= 20; i++) {
-				result.armorClass[i - 1] += GetRollResult(i, off, def, chr.defenseBoost, ref result.armorClass[20], ref result.armorClass[21]) / 2;
-				result.armorClass[i - 1] += GetRollResult(i, off, def + chr.shieldBonus, chr.defenseBoost, ref result.armorClass[20], ref result.armorClass[21]) / 2;
+				result.armorClass[i - 1] += mon.weight * GetRollResult(i, off, def, chr.defenseBoost, SaveIncrease.NONE, ref result.armorClass[20], ref result.armorClass[21]) / 2;
+				result.armorClass[i - 1] += mon.weight * GetRollResult(i, off, def + chr.shieldBonus, SaveIncrease.NONE, chr.defenseBoost, ref result.armorClass[20], ref result.armorClass[21]) / 2;
 			}
 		}
 		if(mon.stealth != MTEML.NONE) {
 			int skil = Character.GetStatValue(chr, chr.perception, StatAttr.WIS, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.PERCEPTION);
 			int diff = 10 + Monster.GetStealth(mon.stealth, mon.level);
-			result.perceptiontot++;
+			result.perceptiontot += mon.weight;
 			for(int i = 1; i <= 20; i++) {
 				if(skil + i >= diff) {
-					result.perception[i - 1] += (int)RollResult.SUCCESS;
+					result.perception[i - 1] += mon.weight * (int)RollResult.SUCCESS;
 				}
 				else {
 					if(result.perception[20] < i) result.perception[20] = i;
-					result.perception[i - 1] += (int)RollResult.FAIL;
+					result.perception[i - 1] += mon.weight * (int)RollResult.FAIL;
 				}
 			}
 		}
@@ -427,7 +428,7 @@ public class Main : MonoBehaviour
 			def = Hazard.GetArmorClass(haz.armorClass, haz.level);
 			result.attacktot++;
 			for(int i = 1; i <= 20; i++) {
-				result.attack[i - 1] += GetRollResult(i, off, def, chr.attackBoost, ref result.attack[20], ref result.attack[21]);
+				result.attack[i - 1] += GetRollResult(i, off, def, chr.attackBoost, SaveIncrease.NONE, ref result.attack[20], ref result.attack[21]);
 			}
 		}
 		if(haz.usesAttack) {
@@ -435,7 +436,7 @@ public class Main : MonoBehaviour
 			def = Character.GetArmorClass(chr, chr.armorClass, StatAttr.DEX, mode) + 10 + Character.GetItemBonus(chr, mode, chr.armorType == ArmorType.HEAVY ? ItemBonusType.HEAVY_ARMOR : ItemBonusType.ARMOR) + hazardFinder;
 			result.armortot++;
 			for(int i = 1; i <= 20; i++) {
-				result.armorClass[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE, ref result.armorClass[20], ref result.armorClass[21]);
+				result.armorClass[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE, SaveIncrease.NONE, ref result.armorClass[20], ref result.armorClass[21]);
 			}
 		}
 		if(haz.usesSavingThrow) {
@@ -444,15 +445,15 @@ public class Main : MonoBehaviour
 				sdc = Hazard.GetSaveDC(haz.effectDifficultyClass, haz.level);
 				result.forttot++;
 				for(int i = 1; i <= 20; i++) {
-					result.fort[i - 1] += GetRollResult(i, sve, sdc, chr.fortSaveBoost, ref result.fort[20], ref result.fort[21]);
+					result.fort[i - 1] += GetRollResult(i, sve, sdc, chr.fortSaveBoost, SaveIncrease.NONE, ref result.fort[20], ref result.fort[21]);
 				}
 			}
 			if(haz.canAffectsSaves.HasFlag(AffectType.REFX)) {
-				sve = Character.GetStatValue(chr, chr.refx, StatAttr.DEX, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SAVING_THROWS) + hazardFinder;
+				sve = Character.GetReflexSave(chr, chr.refx, StatAttr.DEX, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SAVING_THROWS) + hazardFinder;
 				sdc = Hazard.GetSaveDC(haz.effectDifficultyClass, haz.level);
 				result.refxtot++;
 				for(int i = 1; i <= 20; i++) {
-					result.refx[i - 1] += GetRollResult(i, sve, sdc, chr.refxSaveBoost, ref result.refx[20], ref result.refx[21]);
+					result.refx[i - 1] += GetRollResult(i, sve, sdc, chr.refxSaveBoost, SaveIncrease.NONE, ref result.refx[20], ref result.refx[21]);
 				}
 			}
 			if(haz.canAffectsSaves.HasFlag(AffectType.WILL)) {
@@ -460,7 +461,7 @@ public class Main : MonoBehaviour
 				sdc = Hazard.GetSaveDC(haz.effectDifficultyClass, haz.level);
 				result.willtot++;
 				for(int i = 1; i <= 20; i++) {
-					result.will[i - 1] += GetRollResult(i, sve, sdc, chr.willSaveBoost, ref result.will[20], ref result.will[21]);
+					result.will[i - 1] += GetRollResult(i, sve, sdc, chr.willSaveBoost, SaveIncrease.NONE, ref result.will[20], ref result.will[21]);
 				}
 			}
 		}
@@ -468,14 +469,14 @@ public class Main : MonoBehaviour
 			result.spellDCtot++;
 			sve = Hazard.GetFortReflexBonus(haz.fortSave, haz.level);
 			for(int i = 1; i <= 20; i++) {
-				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
+				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
 			}
 		}
 		if(haz.canBeAttacked && chr.canAffectsSaves.HasFlag(AffectType.REFX)) {
 			result.spellDCtot++;
 			sve = Hazard.GetFortReflexBonus(haz.refxSave, haz.level);
 			for(int i = 1; i <= 20; i++) {
-				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
+				result.classSpellDC[i - 1] += GetRollResult(i, sve, sdc, SaveIncrease.NONE, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
 			}
 		}
 		result.totSkills++;
@@ -483,17 +484,17 @@ public class Main : MonoBehaviour
 		off = Character.GetSkillValue(chr, GetBestTeml(chr, chr.level), skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_BEST);
 		def = Hazard.GetSkillDC(haz.disable, haz.level);
 		for(int i = 1; i <= 20; i++) {
-			result.skillSpecialist[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE, ref result.skillSpecialist[20], ref result.skillSpecialist[21]);
+			result.skillSpecialist[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE, SaveIncrease.NONE, ref result.skillSpecialist[20], ref result.skillSpecialist[21]);
 		}
 		skillStat = GetBestSkillStat(chr, 1);
 		off = Character.GetSkillValue(chr, GetBestTeml(chr, chr.level - 7), skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_DECENT);
 		for(int i = 1; i <= 20; i++) {
-			result.skillDecent[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE, ref result.skillDecent[20], ref result.skillDecent[21]);
+			result.skillDecent[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE, SaveIncrease.NONE, ref result.skillDecent[20], ref result.skillDecent[21]);
 		}
 		skillStat = GetBestSkillStat(chr, 3);
 		off = Character.GetSkillValue(chr, TEML.TRAINED, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_LOWEST);
 		for(int i = 1; i <= 20; i++) {
-			result.skillDabbler[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE, ref result.skillDabbler[20], ref result.skillDabbler[21]);
+			result.skillDabbler[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE, SaveIncrease.NONE, ref result.skillDabbler[20], ref result.skillDabbler[21]);
 		}
 		int skil = Character.GetStatValue(chr, chr.perception, StatAttr.WIS, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.PERCEPTION) + hazardFinder;
 		int diff = Hazard.GetSkillDC(haz.stealth, haz.level);
@@ -509,61 +510,68 @@ public class Main : MonoBehaviour
 		}
 	}
 
-	private static float GetRollResult(int i, int off, int def, SaveIncrease saveBoost, ref float maxMiss, ref float minCrit) {
+	private static float GetRollResult(int i, int off, int def, SaveIncrease saveBoost, SaveIncrease monsterSaveBoost, ref float maxMiss, ref float minCrit) {
 		if(saveBoost.HasFlag(SaveIncrease.MINIMUM_10)) {
 			i = Math.Max(i, 10);
 		}
 		if(i == 1) {
 			if(saveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-				return GetRerollResult(RollResult.FAIL, off, def, i, saveBoost, ref maxMiss, ref minCrit);
+				return GetRerollResult(RollResult.FAIL, off, def, i, saveBoost, monsterSaveBoost, ref maxMiss, ref minCrit);
 			else
-				return GetRerollResult(RollResult.CRIT_FAIL, off, def, i, saveBoost, ref maxMiss, ref minCrit);
+				return GetRerollResult(RollResult.CRIT_FAIL, off, def, i, saveBoost, monsterSaveBoost, ref maxMiss, ref minCrit);
 		}
 		if(i == 20 || (saveBoost.HasFlag(SaveIncrease.CRIT_ON_19) && i == 19)) {
 			if(off + i >= def) {
-				return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, i, saveBoost, ref maxMiss, ref minCrit);
+				return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, i, saveBoost, monsterSaveBoost, ref maxMiss, ref minCrit);
 			}
 			else if(off + i >= def - 10 && i == 20) {
 				if(saveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-					return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, i, saveBoost, ref maxMiss, ref minCrit);
+					return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, i, saveBoost, monsterSaveBoost, ref maxMiss, ref minCrit);
 				else
-					return GetRerollResult(RollResult.SUCCESS, off, def, i, saveBoost, ref maxMiss, ref minCrit);
+					return GetRerollResult(RollResult.SUCCESS, off, def, i, saveBoost, monsterSaveBoost, ref maxMiss, ref minCrit);
 			}
 			else {
 				if(saveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-					return GetRerollResult(RollResult.SUCCESS, off, def, i, saveBoost, ref maxMiss, ref minCrit);
+					return GetRerollResult(RollResult.SUCCESS, off, def, i, saveBoost, monsterSaveBoost, ref maxMiss, ref minCrit);
 				else
-					return GetRerollResult(RollResult.FAIL, off, def, i, saveBoost, ref maxMiss, ref minCrit);
+					return GetRerollResult(RollResult.FAIL, off, def, i, saveBoost, monsterSaveBoost, ref maxMiss, ref minCrit);
 			}
 		}
 		if(off + i >= def) { //save
 			if(off + i >= def + 10) { //crit
-				return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, i, saveBoost, ref maxMiss, ref minCrit);
+				return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, i, saveBoost, monsterSaveBoost, ref maxMiss, ref minCrit);
 			}
 			else {
 				if(saveBoost.HasFlag(SaveIncrease.SUCCESS_IS_CRIT_SUCCESS))
-					return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, i, saveBoost, ref maxMiss, ref minCrit);
+					return GetRerollResult(RollResult.CRIT_SUCCESS, off, def, i, saveBoost, monsterSaveBoost, ref maxMiss, ref minCrit);
 				else
-					return GetRerollResult(RollResult.SUCCESS, off, def, i, saveBoost, ref maxMiss, ref minCrit);
+					return GetRerollResult(RollResult.SUCCESS, off, def, i, saveBoost, monsterSaveBoost, ref maxMiss, ref minCrit);
 			}
 		}
 		else { //fail
 			if(off + i <= def - 10) {
 				if(saveBoost.HasFlag(SaveIncrease.CRIT_FAIL_IS_FAIL))
-					return GetRerollResult(RollResult.FAIL, off, def, i, saveBoost, ref maxMiss, ref minCrit);
+					return GetRerollResult(RollResult.FAIL, off, def, i, saveBoost, monsterSaveBoost, ref maxMiss, ref minCrit);
 				else
-					return GetRerollResult(RollResult.CRIT_FAIL, off, def, i, saveBoost, ref maxMiss, ref minCrit);
+					return GetRerollResult(RollResult.CRIT_FAIL, off, def, i, saveBoost, monsterSaveBoost, ref maxMiss, ref minCrit);
 			}
 			else { //crit
 				if(saveBoost.HasFlag(SaveIncrease.FAIL_IS_SUCCESS))
-					return GetRerollResult(RollResult.SUCCESS, off, def, i, saveBoost, ref maxMiss, ref minCrit);
+					return GetRerollResult(RollResult.SUCCESS, off, def, i, saveBoost, monsterSaveBoost, ref maxMiss, ref minCrit);
 				else
-					return GetRerollResult(RollResult.FAIL, off, def, i, saveBoost, ref maxMiss, ref minCrit);
+					return GetRerollResult(RollResult.FAIL, off, def, i, saveBoost, monsterSaveBoost, ref maxMiss, ref minCrit);
 			}
 		}
 	}
 
-	private static float GetRerollResult(RollResult baseResult, int off, int def, int roll, SaveIncrease saveBoost, ref float maxMiss, ref float minCrit) {
+	private static float GetRerollResult(RollResult baseResult, int off, int def, int roll, SaveIncrease saveBoost, SaveIncrease monsterSaveBoost, ref float maxMiss, ref float minCrit) {
+		if(monsterSaveBoost.HasFlag(SaveIncrease.AURA_OF_MISFORTUNE)) {
+			float result = 0;
+			for(int i=1;i<=20;i++) {
+				result += GetRollResult(Math.Min(i, roll), off, def, saveBoost, SaveIncrease.NONE, ref maxMiss, ref minCrit);
+			}
+			return result / 20f;
+		}
 		if(baseResult < RollResult.SUCCESS && maxMiss < roll) {
 			maxMiss = roll;
 		}

@@ -19,6 +19,7 @@ public class Monster : ScriptableObject
 	public bool attacksAreSpells;
 	public MTEML abilitySaveDC;
 	public AffectType canAffectsSaves;
+	public SaveIncrease globalDefenseBoost;
 
 	/*public static int GetStatValue(Monster mon, MStatAttr stat) {
 		MTEML teml = mon.GetAttribute(stat);

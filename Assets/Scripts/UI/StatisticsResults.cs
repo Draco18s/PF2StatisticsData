@@ -1,22 +1,22 @@
 ﻿public class StatisticsResults {
 	public float[] attack;
-	public int attacktot;
+	public float attacktot;
 	public float[] armorClass;
-	public int armortot;
+	public float armortot;
 	public float[] classSpellDC;
-	public int spellDCtot;
+	public float spellDCtot;
 	public float[] perception;
-	public int perceptiontot;
+	public float perceptiontot;
 	public float[] fort;
-	public int forttot;
+	public float forttot;
 	public float[] refx;
-	public int refxtot;
+	public float refxtot;
 	public float[] will;
-	public int willtot;
+	public float willtot;
 	public float[] skillSpecialist;
 	public float[] skillDecent;
 	public float[] skillDabbler;
-	public int totSkills;
+	public float totSkills;
 
 	public StatisticsResults() {
 		attack = new float[22];

@@ -75,6 +75,7 @@
     <Compile Include="Assets\Scripts\Scriptables\SaveIncrease.cs" />
     <Compile Include="Assets\Scripts\Scriptables\StatArray.cs" />
     <Compile Include="Assets\Scripts\Scriptables\StatAttr.cs" />
+    <Compile Include="Assets\Scripts\Scriptables\StatGen.cs" />
     <Compile Include="Assets\Scripts\Scriptables\StatRank.cs" />
     <Compile Include="Assets\Scripts\Scriptables\TEML.cs" />
     <Compile Include="Assets\Scripts\UI\BreakdownBar.cs" />

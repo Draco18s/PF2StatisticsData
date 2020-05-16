@@ -33,10 +33,10 @@ MonoBehaviour:
   refxSaveBoost: 5
   will: 6
   willSaveBoost: 4
-  stats:
-    STR: 4
-    DEX: 0
-    CON: 2
-    INT: 3
-    WIS: 1
-    CHA: 3
+  statGen:
+    STR: 000000000100010100
+    DEX: 010001010101010101
+    CON: 000100000101000000
+    INT: 000000000000000101
+    WIS: 000000000101010001
+    CHA: 010001000001010101

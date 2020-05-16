@@ -27,23 +27,50 @@ public class Character : ScriptableObject
 	public SaveIncrease refxSaveBoost;
 	public TEML will;
 	public SaveIncrease willSaveBoost;
-	public StatArray stats;
+	//public StatArray stats;
+	public StatGen statGen;
 
 	public static int GetSkillValue(Character chr, TEML teml, StatAttr stat, ItemBonusMode mode) {
+		int b = (int)teml;
+		if(teml > TEML.UNTRAINED) {
+			b += chr.level;
+		}
+		b += GetAttributeValue(chr, stat, mode);
+		return b;
+	}
+
+	public static int GetAttributeValue(Character chr, StatAttr stat, ItemBonusMode mode) {
 		//TODO: items by level
-		if(teml > TEML.UNTRAINED)
-			return chr.level + (int)teml + StatArray.GetValue(chr.stats.GetRankFor(stat), chr.level) + (chr.stats.GetRankFor(stat) == StatRank.KEY ? GetItemBonus(chr, mode, ItemBonusType.ATTRIBUTE) : 0);
-		return StatArray.GetValue(chr.stats.GetRankFor(stat), chr.level) + (chr.stats.GetRankFor(stat) == StatRank.KEY ? GetItemBonus(chr, mode, ItemBonusType.ATTRIBUTE) : 0);
+		return StatGen.CalcForStat(chr.statGen, stat) + (stat == chr.classStat ? GetItemBonus(chr, mode, ItemBonusType.ATTRIBUTE) : 0);
+	}
+
+	public static int GetRawAttributeValue(Character chr, StatAttr stat, ItemBonusMode mode) {
+		//TODO: items by level
+		return StatGen.CalcForStatRaw(chr.statGen, stat) + (stat == chr.classStat ? GetItemBonus(chr, mode, ItemBonusType.ATTRIBUTE) : 0);
 	}
 
 	public static int GetStatValue(Character chr, TEML teml, StatAttr stat, ItemBonusMode mode) {
-		if(teml > TEML.UNTRAINED)
-			return chr.level + (int)teml + StatArray.GetValue(chr.stats.GetRankFor(stat), chr.level) + (chr.stats.GetRankFor(stat) == StatRank.KEY ? GetItemBonus(chr, mode, ItemBonusType.ATTRIBUTE) : 0);
-		return StatArray.GetValue(chr.stats.GetRankFor(stat), chr.level) + (chr.stats.GetRankFor(stat) == StatRank.KEY ? GetItemBonus(chr, mode, ItemBonusType.ATTRIBUTE) : 0);
+		int b = (int)teml;
+		if(teml > TEML.UNTRAINED) {
+			b += chr.level;
+		}
+		b += GetAttributeValue(chr, stat, mode);
+		return b;
+	}
+
+	public static int GetReflexSave(Character chr, TEML teml, StatAttr stat, ItemBonusMode mode) {
+		int baseSave = GetStatValue(chr, teml, stat, mode);
+		int bulwark = 0;
+		switch(chr.armorType) {
+			case ArmorType.HEAVY:
+				bulwark = 3;
+				break;
+		}
+		return baseSave + bulwark;
 	}
 
 	public static int GetArmorClass(Character chr, TEML teml, StatAttr stat, ItemBonusMode mode) {
-		int dex = StatArray.GetValue(chr.stats.GetRankFor(StatAttr.DEX), chr.level) + (chr.stats.GetRankFor(stat) == StatRank.KEY ? GetItemBonus(chr, mode, ItemBonusType.ATTRIBUTE) : 0);
+		int dex = GetAttributeValue(chr, StatAttr.DEX, mode);
 		int baseAC = GetStatValue(chr, teml, stat, mode) - dex;
 		int armorAC = 0;
 		switch (chr.armorType) {
@@ -66,23 +93,15 @@ public class Character : ScriptableObject
 	}
 
 	public static StatAttr GetSecondaryStat(Character chr, StatRank rank) {
-		if(chr.stats.STR == rank) return StatAttr.STR;
-		if(chr.stats.DEX == rank) return StatAttr.DEX;
-		if(chr.stats.CON == rank) return StatAttr.CON;
-		if(chr.stats.INT == rank) return StatAttr.INT;
-		if(chr.stats.WIS == rank) return StatAttr.WIS;
-		if(chr.stats.CHA == rank) return StatAttr.CHA;
-		return chr.classStat;
+		switch(rank) {
+			case StatRank.KEY:
+				return chr.classStat;
+		}
+		return StatGen.GetBestFor(chr.statGen, rank, chr.classStat);
 	}
 
 	public static StatAttr GetSecondaryStat(Character chr, StatRank rank, StatAttr not) {
-		if(chr.stats.STR == rank && not != StatAttr.STR) return StatAttr.STR;
-		if(chr.stats.DEX == rank && not != StatAttr.DEX) return StatAttr.DEX;
-		if(chr.stats.CON == rank && not != StatAttr.CON) return StatAttr.CON;
-		if(chr.stats.INT == rank && not != StatAttr.INT) return StatAttr.INT;
-		if(chr.stats.WIS == rank && not != StatAttr.WIS) return StatAttr.WIS;
-		if(chr.stats.CHA == rank && not != StatAttr.CHA) return StatAttr.CHA;
-		return StatAttr.STR; //this will always fail at the caller
+		return StatGen.GetBestFor(chr.statGen, rank, not);
 	}
 
 	public static int GetItemBonus(Character chr, ItemBonusMode mode, ItemBonusType bonus) {

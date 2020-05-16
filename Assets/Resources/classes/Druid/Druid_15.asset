@@ -18,6 +18,7 @@ MonoBehaviour:
   attackStat: 0
   attackBoost: 0
   armorClass: 4
+  defenseBoost: 0
   shieldBonus: 0
   armorType: 2
   classSpellDC: 6
@@ -32,10 +33,10 @@ MonoBehaviour:
   refxSaveBoost: 0
   will: 6
   willSaveBoost: 4
-  stats:
-    STR: 1
-    DEX: 2
-    CON: 3
-    INT: 4
-    WIS: 0
-    CHA: 4
+  statGen:
+    STR: 010000000101010100
+    DEX: 000001000100000000
+    CON: 000000000101010100
+    INT: 000000000001010100
+    WIS: 010001010101010100
+    CHA: 000100000000000000

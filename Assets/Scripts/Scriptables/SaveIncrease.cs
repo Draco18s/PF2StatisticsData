@@ -17,4 +17,5 @@ public enum SaveIncrease {
 	MONSTER_HUNTER = 1 << 11,
 	MASTER_MONSTER_HUNTER = 1 << 12,
 	LEGENDARY_MONSTER_HUNTER = 1 << 13,
+	AURA_OF_MISFORTUNE = 1 << 14,
 }
