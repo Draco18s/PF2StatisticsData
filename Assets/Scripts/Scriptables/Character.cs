@@ -88,6 +88,9 @@ public class Character : ScriptableObject
 				dex = Mathf.Min(dex, 0);
 				armorAC = Mathf.Max(Mathf.Max(6 - dex, 0),6);
 				break;
+			case ArmorType.MAGIC:
+				armorAC = 1 + (chr.level > 11 ? 1 : 0);
+				break;
 		}
 		return baseAC + armorAC + dex;
 	}

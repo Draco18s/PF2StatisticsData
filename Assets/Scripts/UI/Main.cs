@@ -284,7 +284,11 @@ public class Main : MonoBehaviour
 	}
 
 	private static void CalcStatsForPair(Character chr, Monster mon, StatisticsResults result, ItemBonusMode mode) {
-		int off = Character.GetStatValue(chr, chr.attacks, chr.attackStat, mode)+Character.GetItemBonus(chr,mode,ItemBonusType.WEAPON);
+		int off;
+		if(chr.attackStat == StatAttr.STR || chr.attackStat == StatAttr.DEX)
+			off = Character.GetStatValue(chr, chr.attacks, chr.attackStat, mode)+Character.GetItemBonus(chr,mode,ItemBonusType.WEAPON);
+		else
+			off = Character.GetStatValue(chr, chr.classSpellDC, chr.attackStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SPELLDC);
 		int def = Monster.GetArmor(mon.armorClass, mon.level);
 		result.attacktot+=mon.weight;
 		bool attackIsDex = chr.attackStat == StatAttr.DEX || chr.attackStat == StatAttr.INT || chr.attackStat == StatAttr.WIS || chr.attackStat == StatAttr.CHA;

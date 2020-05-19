@@ -20,7 +20,7 @@ MonoBehaviour:
   armorClass: 4
   defenseBoost: 0
   shieldBonus: 0
-  armorType: 0
+  armorType: 4
   classSpellDC: 6
   alchemistUseItemDC: 0
   canAffectsSaves: -1
