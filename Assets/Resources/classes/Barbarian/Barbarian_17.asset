@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb8dbce0926de0f44b1fdd4215006a4f, type: 3}
-  m_Name: Barbarian_15
+  m_Name: Barbarian_17
   m_EditorClassIdentifier: 
   name: Barbarian
-  level: 15
+  level: 17
   attacks: 6
   attackStat: 0
   attackBoost: 0
@@ -25,7 +25,7 @@ MonoBehaviour:
   alchemistUseItemDC: 0
   canAffectsSaves: 3
   classStat: 0
-  perception: 4
+  perception: 6
   firstSkillIncrease: 3
   fort: 8
   fortSaveBoost: 5

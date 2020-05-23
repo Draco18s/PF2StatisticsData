@@ -17,7 +17,9 @@ public class CharacterEditor : Editor {
 	public override void OnInspectorGUI() {
 		Character c = (Character)serializedObject.targetObject;
 		int origLevel = c.level;
+		EditorGUI.BeginChangeCheck();
 		base.OnInspectorGUI();
+		bool baseChanged = EditorGUI.EndChangeCheck();
 		if(c.level > 20) c.level = 20;
 		SerializedProperty statProp = serializedObject.FindProperty("statGen");
 		EditorGUILayout.BeginHorizontal();
@@ -25,8 +27,8 @@ public class CharacterEditor : Editor {
 		Rect r = rOriginal;
 		r.y += 50;
 		r.xMin += Screen.width -200;
-
-		if(origLevel/5 < c.level/5) {
+		
+		/*if(origLevel/5 < c.level/5) {
 			FillInBoosts(statProp, origLevel+5);
 			if((origLevel+5) / 5 < c.level / 5) {
 				FillInBoosts(statProp, origLevel + 10);
@@ -37,7 +39,7 @@ public class CharacterEditor : Editor {
 					}
 				}
 			}
-		}
+		}*/
 
 		GUIUtility.RotateAroundPivot(-90f, new Vector2(r.xMin, rOriginal.yMin+50));
 		EditorGUI.LabelField(r, "Ancestry");
@@ -60,12 +62,13 @@ public class CharacterEditor : Editor {
 		GUIUtility.RotateAroundPivot(90f, new Vector2(r.xMin, rOriginal.yMin + 50));
 		rOriginal.y += 55;
 		rOriginal.x += 1;
-		rOriginal = DrawStatEditorGui(rOriginal, "STR", statProp, c.level);
-		rOriginal = DrawStatEditorGui(rOriginal, "DEX", statProp, c.level);
-		rOriginal = DrawStatEditorGui(rOriginal, "CON", statProp, c.level);
-		rOriginal = DrawStatEditorGui(rOriginal, "INT", statProp, c.level);
-		rOriginal = DrawStatEditorGui(rOriginal, "WIS", statProp, c.level);
-		rOriginal = DrawStatEditorGui(rOriginal, "CHA", statProp, c.level);
+
+		rOriginal = DrawStatEditorGui(rOriginal, "STR", statProp, c.level, false);
+		rOriginal = DrawStatEditorGui(rOriginal, "DEX", statProp, c.level, false);
+		rOriginal = DrawStatEditorGui(rOriginal, "CON", statProp, c.level, false);
+		rOriginal = DrawStatEditorGui(rOriginal, "INT", statProp, c.level, false);
+		rOriginal = DrawStatEditorGui(rOriginal, "WIS", statProp, c.level, false);
+		rOriginal = DrawStatEditorGui(rOriginal, "CHA", statProp, c.level, false);
 		bool showError = Validate(c.level, statProp, out string stringError);
 		serializedObject.ApplyModifiedProperties();
 		EditorGUILayout.EndHorizontal();
@@ -187,7 +190,7 @@ public class CharacterEditor : Editor {
 		return false;
 	}
 
-	private Rect DrawStatEditorGui(Rect rect, string statString, SerializedProperty property, int level) {
+	private Rect DrawStatEditorGui(Rect rect, string statString, SerializedProperty property, int level, bool blankAbove) {
 		SerializedProperty statProp = property.FindPropertyRelative(statString);
 		if(statProp == null) return rect;
 		Rect orig = rect;
@@ -206,8 +209,10 @@ public class CharacterEditor : Editor {
 				statProp.GetArrayElementAtIndex(0).boolValue = false;
 			}
 		}
-		for(int i = 5 + (level / 5); i < 9; i++) {
-			statProp.GetArrayElementAtIndex(i).boolValue = false;
+		if(blankAbove) {
+			for(int i = 5 + (level / 5); i < 9; i++) {
+				statProp.GetArrayElementAtIndex(i).boolValue = false;
+			}
 		}
 		//statProp.boolValue = EditorGUI.Toggle(rect, statProp.boolValue);
 		orig.y += 20;

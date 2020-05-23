@@ -22,6 +22,7 @@ public class BreakdownBar : MonoBehaviour
 			Image img = go.GetComponent<Image>();
 			bits[i] = img;
 		}
+		transform.Find("TenNotch").SetAsLastSibling();
     }
 
 	public void SetBitColors(Color[] colors) {
