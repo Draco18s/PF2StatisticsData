@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Barbarian_14
   m_EditorClassIdentifier: 
   name: Barbarian
-  level: 13
+  level: 14
   attacks: 6
   attackStat: 0
   attackBoost: 0

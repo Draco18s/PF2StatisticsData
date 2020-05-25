@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Ranger_19
   m_EditorClassIdentifier: 
   name: Ranger
-  level: 20
+  level: 19
   attacks: 6
   attackStat: 1
   attackBoost: 14336

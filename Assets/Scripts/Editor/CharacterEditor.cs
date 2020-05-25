@@ -17,9 +17,9 @@ public class CharacterEditor : Editor {
 	public override void OnInspectorGUI() {
 		Character c = (Character)serializedObject.targetObject;
 		int origLevel = c.level;
-		EditorGUI.BeginChangeCheck();
+		//EditorGUI.BeginChangeCheck();
 		base.OnInspectorGUI();
-		bool baseChanged = EditorGUI.EndChangeCheck();
+		//bool baseChanged = EditorGUI.EndChangeCheck();
 		if(c.level > 20) c.level = 20;
 		SerializedProperty statProp = serializedObject.FindProperty("statGen");
 		EditorGUILayout.BeginHorizontal();

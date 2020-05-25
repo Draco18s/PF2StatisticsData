@@ -37,6 +37,10 @@ public class ResultWindow : MonoBehaviour {
 		}
 	}
 
+	public void UpdateDifficulty() {
+		UpdateWindow();
+	}
+
 	private static void ClearWindow(GameObject window) {
 		window.transform.Find("ClassLevel").GetComponent<Text>().text = "";
 		Color[] cols = new Color[20];

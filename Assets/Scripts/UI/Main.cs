@@ -6,23 +6,27 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Main : MonoBehaviour
-{
+public class Main : MonoBehaviour {
 	// Start is called before the first frame update
 	private int diffSetting;
-	public Dropdown diffDropdown;
+	public Transform topBar;
 	public GameObject[] resultWindow;
 	public GradientAsset gradient;
 	public GradientAsset[] gradients;
-	public GameObject legend;
 	public static Main instance;
 	public GameObject tooltip;
 	public ItemBonusMode itemBonusMode = ItemBonusMode.ITEM;
 	private Character[] allChar;
 	private Monster[] allMons;
 	private Hazard[] allHaz;
-	public List<Dropdown.OptionData> levelOpts;
-	public List<Dropdown.OptionData> classOpts;
+	[NonSerialized] public List<Dropdown.OptionData> levelOpts;
+	[NonSerialized] public List<Dropdown.OptionData> classOpts;
+	protected Dropdown diffDropdown {
+		get {
+			return topBar.Find("DifficultySelect").GetComponent<Dropdown>();
+		}
+	}
+	private int cycle = 1;
 
 	void Start() {
 		instance = this;
@@ -45,14 +49,14 @@ public class Main : MonoBehaviour
 		foreach(int lv in availLevels) {
 			levelOpts.Add(new Dropdown.OptionData(lv.ToString()));
 		}
-		
 		diffDropdown.onValueChanged.AddListener(v => {
 			diffSetting = v;
 		});
-		legend.transform.Find("Hover").GetComponent<Image>().AddHover(p => {
+		Transform legend = topBar.Find("Legend");
+		legend.Find("Hover").GetComponent<Image>().AddHover(p => {
 			ShowTooltip(legend.transform.position+new Vector3(-50,-100,0), "Indicates an approximate result of making a roll against challenges of the indicated difficulty as an average between all possible outcomes (nat-1 to nat-20).\nE.g. if only two results are possible (fail or success) then the average will be a blend between the two (yellow).", 4, 1, false);
 		});
-		legend.transform.Find("Hover2").GetComponent<Image>().AddHover(p => {
+		legend.Find("Hover2").GetComponent<Image>().AddHover(p => {
 			ShowTooltip(legend.transform.position + new Vector3(-50, -100, 0), "Black: Critical Failure\nRed: Failure\nGreen: Success\nBlue: Critical Success\nBlend: Some mixture.", 4, 1, false);
 		});
 		Color[] col = new Color[20];
@@ -106,6 +110,26 @@ public class Main : MonoBehaviour
 		Debug.Log("Monsters, mod: " + mod);
 		Debug.Log("Monsters, high: " + high);
 		Debug.Log("Monsters, ext: " + ext);
+		topBar.Find("UpdateBtn").GetComponent<Button>().onClick.AddListener(() => {
+			foreach(GameObject window in resultWindow) {
+				window.GetComponent<ResultWindow>().UpdateDifficulty();
+			}
+		});
+		topBar.Find("CycleToggle").GetComponent<Toggle>().onValueChanged.AddListener(b => {
+			if(b) {
+				StartCoroutine(CycleLevelValues());
+			}
+		});
+	}
+
+	private IEnumerator CycleLevelValues() {
+		while(topBar.Find("CycleToggle").GetComponent<Toggle>().isOn) {
+			foreach(GameObject window in resultWindow) {
+				window.GetComponent<ResultWindow>().levelDropdown.value = cycle;
+			}
+			cycle = (cycle % 20) + 1;
+			yield return new WaitForSeconds(0.5f);
+		}
 	}
 
 	public static Character GetCharacter(string className, int levelSetting) {
