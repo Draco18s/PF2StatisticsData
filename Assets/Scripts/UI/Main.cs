@@ -240,7 +240,7 @@ public class Main : MonoBehaviour {
 			skil = Character.GetStatValue(chr, chr.perception, StatAttr.WIS, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.PERCEPTION);
 			result.totSkills++;
 			result.perceptiontot++;
-			int diff = 14 + level + (level / 3) + (level >= 5 ? (level >= 23 ? (level >= 25 ? 3 : 2) : 1) : 0);
+			int diff = 14 + level + (level / 3) + (level >= 22 ? (level >= 23 ? (level >= 25 ? 3 : 2) : 1) : 0);
 			for(int i = 1; i <= 20; i++) {
 				if(skil + i >= diff) {
 					result.perception[i - 1] += (int)RollResult.SUCCESS;
@@ -511,6 +511,7 @@ public class Main : MonoBehaviour {
 		StatAttr skillStat = GetBestSkillStat(chr, 0);
 		off = Character.GetSkillValue(chr, GetBestTeml(chr, chr.level), skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_BEST);
 		def = Hazard.GetSkillDC(haz.disable, haz.level);
+		if(haz.isComplex) def -= 5;
 		for(int i = 1; i <= 20; i++) {
 			result.skillSpecialist[i - 1] += GetRollResult(i, off, def, SaveIncrease.NONE, SaveIncrease.NONE, ref result.skillSpecialist[20], ref result.skillSpecialist[21]);
 		}

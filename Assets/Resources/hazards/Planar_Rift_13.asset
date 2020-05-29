@@ -15,7 +15,7 @@ MonoBehaviour:
   name: Planar Rift
   level: 13
   stealth: 1
-  disable: 2
+  disable: 3
   canBeAttacked: 0
   armorClass: 7
   fortSave: 7
