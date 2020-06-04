@@ -18,6 +18,7 @@ public class Character : ScriptableObject
 	public TEML classSpellDC;
 	public bool alchemistUseItemDC;
 	public AffectType canAffectsSaves;
+	public EffectType effectsType;
 	public StatAttr classStat;
 	public TEML perception;
 	public int firstSkillIncrease;

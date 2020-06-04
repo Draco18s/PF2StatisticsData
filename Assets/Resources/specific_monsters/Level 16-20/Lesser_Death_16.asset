@@ -25,4 +25,4 @@ MonoBehaviour:
   attacksAreSpells: 0
   abilitySaveDC: 7
   canAffectsSaves: 0
-  globalDefenseBoost: 16384
+  globalDefenseBoost: 49152

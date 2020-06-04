@@ -27,6 +27,7 @@ public class Hazard : ScriptableObject {
 	}
 
 	public static int GetArmorClass(MTEML teml, int level) {
+		if(Main.instance != null && Main.instance.forbidExtreme && teml < MTEML.HIGH) teml = MTEML.HIGH;
 		switch(teml) {
 			case MTEML.JUST_BONKERS:
 				return 21 + level + (level / 2) + (level < 2 ? 1 : 0);
@@ -47,6 +48,7 @@ public class Hazard : ScriptableObject {
 	}
 
 	public static int GetFortReflexBonus(MTEML teml, int level) {
+		if(Main.instance != null && Main.instance.forbidExtreme && teml < MTEML.HIGH) teml = MTEML.HIGH;
 		switch(teml) {
 			case MTEML.JUST_BONKERS:
 				return 13 + level + ((level - 1 + (level > 21 ? (1) : 0)) / 2);
@@ -67,6 +69,7 @@ public class Hazard : ScriptableObject {
 	}
 
 	public static int GetSaveDC(MTEML teml, int level) {
+		if(Main.instance != null && Main.instance.forbidExtreme && teml < MTEML.HIGH) teml = MTEML.HIGH;
 		switch(teml) {
 			case MTEML.JUST_BONKERS:
 				return 23 + level + ((level + 3) / 5) + ((level - 1 - (level > 23 ? 1 : 0)) / 5);
@@ -87,6 +90,7 @@ public class Hazard : ScriptableObject {
 	}
 
 	public static int GetSkillDC(MTEML teml, int level) {
+		if(Main.instance != null && Main.instance.forbidExtreme && teml < MTEML.HIGH) teml = MTEML.HIGH;
 		switch(teml) {
 			case MTEML.JUST_BONKERS:
 				return 22 + level + (level / 3) + ((level - 1) / 3);

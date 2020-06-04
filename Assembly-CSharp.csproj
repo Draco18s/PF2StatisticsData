@@ -65,6 +65,7 @@
     <Compile Include="Assets\Scripts\Scriptables\AffectType.cs" />
     <Compile Include="Assets\Scripts\Scriptables\ArmorType.cs" />
     <Compile Include="Assets\Scripts\Scriptables\Character.cs" />
+    <Compile Include="Assets\Scripts\Scriptables\EffectType.cs" />
     <Compile Include="Assets\Scripts\Scriptables\GradientAsset.cs" />
     <Compile Include="Assets\Scripts\Scriptables\Hazard.cs" />
     <Compile Include="Assets\Scripts\Scriptables\ItemBonusMode.cs" />

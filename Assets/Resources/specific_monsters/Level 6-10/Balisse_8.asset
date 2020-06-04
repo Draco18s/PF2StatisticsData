@@ -15,13 +15,14 @@ MonoBehaviour:
   name: Balisse
   level: 8
   weight: 1
-  attacks: 2
-  attacksAreSpells: 0
-  armorClass: 3
-  abilitySaveDC: 2
-  canAffectsSaves: 4
   perception: 2
+  stealth: 7
+  armorClass: 3
   fort: 3
   refx: 4
   will: 2
-  stealth: 7
+  attacks: 2
+  attacksAreSpells: 0
+  abilitySaveDC: 2
+  canAffectsSaves: 4
+  globalDefenseBoost: 32768

@@ -27,18 +27,19 @@ public class Monster : ScriptableObject
 	}*/
 
 	public static int GetAttack(MTEML teml, int level, bool isSpell) {
+		if(Main.instance != null && Main.instance.forbidExtreme && teml < MTEML.HIGH) teml = MTEML.HIGH;
 		if(isSpell) return GetAbilityDC(teml, level) - 8;
 		switch(teml) {
 			case MTEML.JUST_BONKERS:
 				return 12 + level + ((level + 1) / 2);
 			case MTEML.EXTREME:
-				return 10 + level + (level / 2);
+				return 10 + level + (level / 2) + (level < 0 ? 1 : 0);
 			case MTEML.HIGH:
-				return 8 + level + (level / 2);
+				return 8 + level + (level / 2) + (level < 0 ? 1 : 0);
 			case MTEML.MODERATE:
-				return 6 + level + (level / 2);
+				return 6 + level + (level / 2) + (level < 0 ? 1 : 0);
 			case MTEML.LOW:
-				return 4 + level + ((level + 1) / 3);
+				return 4 + level + ((level + 1) / 3) + (level < 0 ? 1 : 0);
 			case MTEML.TERRIBLE:
 				return 2 + level + ((level + 1) / 3);
 			case MTEML.THE_WORST:
@@ -48,6 +49,7 @@ public class Monster : ScriptableObject
 	}
 
 	public static int GetArmor(MTEML teml, int level) {
+		if(Main.instance != null && Main.instance.forbidExtreme && teml < MTEML.HIGH) teml = MTEML.HIGH;
 		switch(teml) {
 			case MTEML.JUST_BONKERS:
 				return 21 + level + (level / 2) + (level < 1 ? 1 : 0);
@@ -68,6 +70,7 @@ public class Monster : ScriptableObject
 	}
 
 	public static int GetAbilityDC(MTEML teml, int level) {
+		if(Main.instance != null && Main.instance.forbidExtreme && teml < MTEML.HIGH) teml = MTEML.HIGH;
 		switch(teml) {
 			case MTEML.JUST_BONKERS:
 				return 22 + level + (level / 2);
@@ -88,6 +91,7 @@ public class Monster : ScriptableObject
 	}
 
 	public static int GetPerception(MTEML teml, int level) {
+		if(Main.instance != null && Main.instance.forbidExtreme && teml < MTEML.HIGH) teml = MTEML.HIGH;
 		switch(teml) {
 			case MTEML.JUST_BONKERS:
 				return 13 + level + (level / 2);
@@ -108,6 +112,7 @@ public class Monster : ScriptableObject
 	}
 
 	public static int GetSavingThrow(MTEML teml, int level) {
+		if(Main.instance != null && Main.instance.forbidExtreme && teml < MTEML.HIGH) teml = MTEML.HIGH;
 		switch(teml) {
 			case MTEML.JUST_BONKERS:
 				return 17 + level + (level / 2);
@@ -116,6 +121,7 @@ public class Monster : ScriptableObject
 	}
 
 	public static int GetStealth(MTEML teml, int level) {
+		if(Main.instance != null && Main.instance.forbidExtreme && teml < MTEML.HIGH) teml = MTEML.HIGH;
 		switch(teml) {
 			case MTEML.JUST_BONKERS:
 				return 12 + level + (level / 3) + ((level - 1) / 3);

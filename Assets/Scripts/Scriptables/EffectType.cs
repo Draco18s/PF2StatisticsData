@@ -1,0 +1,9 @@
+﻿public enum EffectType {
+	NONE,
+	PHYSICAL,
+	ARCANE,
+	DIVINE,
+	OCCULT,
+	PRIMAL,
+	ALCHEMICAL,
+}

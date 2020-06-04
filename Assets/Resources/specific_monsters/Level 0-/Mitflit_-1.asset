@@ -10,18 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 103b5c95877788a4f9a03245b668ea29, type: 3}
-  m_Name: Treerazer_25
+  m_Name: Mitflit_-1
   m_EditorClassIdentifier: 
-  name: Treerazer
-  level: 25
+  name: Mitflit
+  level: -1
   weight: 1
-  perception: 1
-  stealth: 4
-  armorClass: 1
-  fort: 2
-  refx: 3
-  will: 2
-  attacks: 1
+  perception: 3
+  stealth: 2
+  armorClass: 2
+  fort: 4
+  refx: 2
+  will: 3
+  attacks: 2
   attacksAreSpells: 0
-  abilitySaveDC: 3
-  canAffectsSaves: 3
+  abilitySaveDC: 2
+  canAffectsSaves: 4
+  globalDefenseBoost: 0

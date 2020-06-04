@@ -26,6 +26,10 @@ public class Main : MonoBehaviour {
 			return topBar.Find("DifficultySelect").GetComponent<Dropdown>();
 		}
 	}
+	public bool forbidExtreme {
+		get;
+		private set;
+	}
 	private int cycle = 1;
 
 	void Start() {
@@ -119,6 +123,10 @@ public class Main : MonoBehaviour {
 			if(b) {
 				StartCoroutine(CycleLevelValues());
 			}
+		});
+		forbidExtreme = false;
+		topBar.Find("ExtremeToggle").GetComponent<Toggle>().onValueChanged.AddListener(b => {
+			forbidExtreme = b;
 		});
 	}
 
@@ -367,6 +375,7 @@ public class Main : MonoBehaviour {
 		if(chr.canAffectsSaves.HasFlag(AffectType.FORT) || chr.canAffectsSaves.HasFlag(AffectType.FORT_LIVING)) {
 			result.spellDCtot += mon.weight;
 			sve = Monster.GetSavingThrow(mon.fort, mon.level);
+			sve += Math.Max(chr.effectsType.HasFlag(EffectType.ARCANE | EffectType.DIVINE | EffectType.OCCULT | EffectType.PRIMAL) && mon.globalDefenseBoost.HasFlag(SaveIncrease.PLUS_1_VS_MAGIC | SaveIncrease.PLUS_2_VS_MAGIC) ? (mon.globalDefenseBoost.HasFlag(SaveIncrease.PLUS_2_VS_MAGIC) ? 2 : 1) : 0, chr.effectsType.HasFlag(EffectType.DIVINE) && mon.globalDefenseBoost.HasFlag(SaveIncrease.PLUS_3_VS_DIVINE) ? 3 : 0);
 			for(int i = 1; i <= 20; i++) {
 				result.classSpellDC[i - 1] += mon.weight * GetRollResult(i, sve, sdc, SaveIncrease.NONE, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
 			}
@@ -374,6 +383,7 @@ public class Main : MonoBehaviour {
 		if(chr.canAffectsSaves.HasFlag(AffectType.REFX)) {
 			result.spellDCtot += mon.weight;
 			sve = Monster.GetSavingThrow(mon.refx, mon.level);
+			sve += Math.Max(chr.effectsType.HasFlag(EffectType.ARCANE | EffectType.DIVINE | EffectType.OCCULT | EffectType.PRIMAL) && mon.globalDefenseBoost.HasFlag(SaveIncrease.PLUS_1_VS_MAGIC | SaveIncrease.PLUS_2_VS_MAGIC) ? (mon.globalDefenseBoost.HasFlag(SaveIncrease.PLUS_2_VS_MAGIC) ? 2 : 1) : 0, chr.effectsType.HasFlag(EffectType.DIVINE) && mon.globalDefenseBoost.HasFlag(SaveIncrease.PLUS_3_VS_DIVINE) ? 3 : 0);
 			for(int i = 1; i <= 20; i++) {
 				result.classSpellDC[i - 1] += mon.weight * GetRollResult(i, sve, sdc, SaveIncrease.NONE, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
 			}
@@ -381,6 +391,7 @@ public class Main : MonoBehaviour {
 		if(chr.canAffectsSaves.HasFlag(AffectType.WILL)) {
 			result.spellDCtot += mon.weight;
 			sve = Monster.GetSavingThrow(mon.will, mon.level);
+			sve += Math.Max(chr.effectsType.HasFlag(EffectType.ARCANE | EffectType.DIVINE | EffectType.OCCULT | EffectType.PRIMAL) && mon.globalDefenseBoost.HasFlag(SaveIncrease.PLUS_1_VS_MAGIC | SaveIncrease.PLUS_2_VS_MAGIC) ? (mon.globalDefenseBoost.HasFlag(SaveIncrease.PLUS_2_VS_MAGIC) ? 2 : 1) : 0, chr.effectsType.HasFlag(EffectType.DIVINE) && mon.globalDefenseBoost.HasFlag(SaveIncrease.PLUS_3_VS_DIVINE) ? 3 : 0);
 			for(int i = 1; i <= 20; i++) {
 				result.classSpellDC[i - 1] += mon.weight * GetRollResult(i, sve, sdc, SaveIncrease.NONE, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
 			}
@@ -432,6 +443,27 @@ public class Main : MonoBehaviour {
 					if(result.perception[20] < i) result.perception[20] = i;
 					result.perception[i - 1] += mon.weight * (int)RollResult.FAIL;
 				}
+			}
+		}
+		//player stealth vs. monster perception is *heavily* biased in favor of the monster
+		if(false && mon.perception != MTEML.NONE) {
+			int skil = Character.GetStatValue(chr, chr.perception, StatAttr.WIS, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.PERCEPTION);
+			int diff = 10 + Monster.GetPerception(mon.perception, mon.level);
+			result.totSkills++;
+			StatAttr skillStat = GetBestSkillStat(chr, 0);
+			off = Character.GetSkillValue(chr, GetBestTeml(chr, chr.level), skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_BEST);
+			for(int i = 1; i <= 20; i++) {
+				result.skillSpecialist[i - 1] += GetRollResult(i, off, diff, SaveIncrease.NONE, SaveIncrease.NONE, ref result.skillSpecialist[20], ref result.skillSpecialist[21]);
+			}
+			skillStat = GetBestSkillStat(chr, 1);
+			off = Character.GetSkillValue(chr, GetBestTeml(chr, chr.level - 7), skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_DECENT);
+			for(int i = 1; i <= 20; i++) {
+				result.skillDecent[i - 1] += GetRollResult(i, off, diff, SaveIncrease.NONE, SaveIncrease.NONE, ref result.skillDecent[20], ref result.skillDecent[21]);
+			}
+			skillStat = GetBestSkillStat(chr, 3);
+			off = Character.GetSkillValue(chr, TEML.TRAINED, skillStat, mode) + Character.GetItemBonus(chr, mode, ItemBonusType.SKILL_LOWEST);
+			for(int i = 1; i <= 20; i++) {
+				result.skillDabbler[i - 1] += GetRollResult(i, off, diff, SaveIncrease.NONE, SaveIncrease.NONE, ref result.skillDabbler[20], ref result.skillDabbler[21]);
 			}
 		}
 	}

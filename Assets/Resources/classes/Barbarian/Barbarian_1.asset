@@ -24,6 +24,7 @@ MonoBehaviour:
   classSpellDC: 2
   alchemistUseItemDC: 0
   canAffectsSaves: 0
+  effectsType: 1
   classStat: 0
   perception: 4
   firstSkillIncrease: 3

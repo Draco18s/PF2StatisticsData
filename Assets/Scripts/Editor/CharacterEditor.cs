@@ -21,6 +21,8 @@ public class CharacterEditor : Editor {
 		base.OnInspectorGUI();
 		//bool baseChanged = EditorGUI.EndChangeCheck();
 		if(c.level > 20) c.level = 20;
+		//SerializedProperty statPropmag = serializedObject.FindProperty("effectsType");
+		//statPropmag.enumValueIndex = 1;
 		SerializedProperty statProp = serializedObject.FindProperty("statGen");
 		EditorGUILayout.BeginHorizontal();
 		Rect rOriginal = EditorGUILayout.GetControlRect();
