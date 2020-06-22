@@ -35,7 +35,6 @@ public class Main : MonoBehaviour {
 	void Start() {
 		instance = this;
 		allChar = Resources.LoadAll<Character>("classes");
-		allMons = Resources.LoadAll<Monster>("specific_monsters");
 		allHaz = Resources.LoadAll<Hazard>("hazards");
 		List<int> availLevels = new List<int>();
 		classOpts = new List<Dropdown.OptionData>();
@@ -79,18 +78,37 @@ public class Main : MonoBehaviour {
 				window.GetComponent<ResultWindow>().RefreshColor();
 			}
 		});
+		ToggleDropdown togg = topBar.Find("SourceDropdown").GetComponent<ToggleDropdown>();
+		
+		togg.onValueChanged.AddListener(_ => {
+			allMons = new Monster[0];
+			foreach(int i in togg.activeValues) {
+				Dropdown.OptionData dat = togg.options[i];
+				Monster[] mons = Resources.LoadAll<Monster>("specific_monsters/" + dat.text.Replace(" ","_").ToLower());
+				int olen = allMons.Length;
+				Array.Resize<Monster>(ref allMons, olen + mons.Length);
+				Array.Copy(mons, 0, allMons, olen, mons.Length);
+			}
+		});
+		togg.value = 1;
 		//legend.GetComponentInChildren<BreakdownBar>().SetNotches(-1, -1);
-		int ext = 0;
-		int high = 0;
-		int mod = 0;
-		int low = 0;
-		int ter = 0;
-		foreach(Monster mon in allMons) {
-			foreach(MStatAttr atr in Enum.GetValues(typeof(MStatAttr))) {
+		Debug.Log(allMons.Length);
+		foreach(MStatAttr atr in Enum.GetValues(typeof(MStatAttr))) {
+			if(atr == MStatAttr.DISABLE) continue;
+			int ext = 0;
+			int high = 0;
+			int mod = 0;
+			int low = 0;
+			int ter = 0;
+			int wrst = 0;
+			int bnk = 0;
+			foreach(Monster mon in allMons) {
 				MTEML teml = mon.GetAttribute(atr);
 				switch(teml) {
-					case MTEML.TERRIBLE:
 					case MTEML.THE_WORST:
+						wrst++;
+						break;
+					case MTEML.TERRIBLE:
 						ter++;
 						break;
 					case MTEML.LOW:
@@ -102,19 +120,24 @@ public class Main : MonoBehaviour {
 					case MTEML.HIGH:
 						high++;
 						break;
-					case MTEML.JUST_BONKERS:
 					case MTEML.EXTREME:
 						ext++;
 						break;
+					case MTEML.JUST_BONKERS:
+						bnk++;
+						break;
 				}
 			}
+			Debug.Log(atr.ToString() + 
+				"\nwrst: " + wrst +
+				"\nter: " + ter +
+				"\nlow: " + low +
+				"\nmod: " + mod +
+				"\nhigh: " + high +
+				"\next: " + ext +
+				"\nbnk: " + bnk);
 		}
-		Debug.Log("Monsters, ter: " + ter);
-		Debug.Log("Monsters, low: " + low);
-		Debug.Log("Monsters, mod: " + mod);
-		Debug.Log("Monsters, high: " + high);
-		Debug.Log("Monsters, ext: " + ext);
-		topBar.Find("UpdateBtn").GetComponent<Button>().onClick.AddListener(() => {
+		topBar.Find("DifficultySelect/UpdateBtn").GetComponent<Button>().onClick.AddListener(() => {
 			foreach(GameObject window in resultWindow) {
 				window.GetComponent<ResultWindow>().UpdateDifficulty();
 			}
@@ -125,7 +148,7 @@ public class Main : MonoBehaviour {
 			}
 		});
 		forbidExtreme = false;
-		topBar.Find("ExtremeToggle").GetComponent<Toggle>().onValueChanged.AddListener(b => {
+		topBar.Find("DifficultySelect/ExtremeToggle").GetComponent<Toggle>().onValueChanged.AddListener(b => {
 			forbidExtreme = b;
 		});
 	}
@@ -145,7 +168,7 @@ public class Main : MonoBehaviour {
 	}
 
 	public bool Test(Character character, ResultWindow window) {
-		if(character == null) return true;
+		if(character == null || allMons.Length == 0) return true;
 		GetDifficultyLevel(character.level, diffSetting, out int minLv, out int maxLv);
 		if(maxLv < -5) return true;
 		StatisticsResults result = ComputeStatistics(character, allMons, minLv, maxLv, itemBonusMode);
@@ -385,7 +408,7 @@ public class Main : MonoBehaviour {
 			sve = Monster.GetSavingThrow(mon.refx, mon.level);
 			sve += Math.Max(chr.effectsType.HasFlag(EffectType.ARCANE | EffectType.DIVINE | EffectType.OCCULT | EffectType.PRIMAL) && mon.globalDefenseBoost.HasFlag(SaveIncrease.PLUS_1_VS_MAGIC | SaveIncrease.PLUS_2_VS_MAGIC) ? (mon.globalDefenseBoost.HasFlag(SaveIncrease.PLUS_2_VS_MAGIC) ? 2 : 1) : 0, chr.effectsType.HasFlag(EffectType.DIVINE) && mon.globalDefenseBoost.HasFlag(SaveIncrease.PLUS_3_VS_DIVINE) ? 3 : 0);
 			for(int i = 1; i <= 20; i++) {
-				result.classSpellDC[i - 1] += mon.weight * GetRollResult(i, sve, sdc, SaveIncrease.NONE, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
+				result.classSpellDC[i - 1] += mon.weight * GetRollResult(i, sve, sdc, mon.globalDefenseBoost .HasFlag(SaveIncrease.EVASION) ? SaveIncrease.SUCCESS_IS_CRIT_SUCCESS : SaveIncrease.NONE, SaveIncrease.NONE, ref result.classSpellDC[20], ref result.classSpellDC[21]);
 			}
 		}
 		if(chr.canAffectsSaves.HasFlag(AffectType.WILL)) {

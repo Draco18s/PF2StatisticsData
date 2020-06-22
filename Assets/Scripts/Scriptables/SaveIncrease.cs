@@ -21,4 +21,5 @@ public enum SaveIncrease {
 	PLUS_1_VS_MAGIC = 1 << 15,
 	PLUS_2_VS_MAGIC = 1 << 16,
 	PLUS_3_VS_DIVINE = 1 << 17,
+	EVASION = 1 << 18,
 }

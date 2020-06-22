@@ -160,6 +160,6 @@ public class Monster : ScriptableObject
 			case MStatAttr.WILL:
 				return will;
 		}
-		return MTEML.THE_WORST;
+		return MTEML.NONE;
 	}
 }

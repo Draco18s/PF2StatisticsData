@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 103b5c95877788a4f9a03245b668ea29, type: 3}
+  m_Name: Flesh_Golem_8
+  m_EditorClassIdentifier: 
+  name: Flesh Golem
+  level: 8
+  weight: 1
+  perception: 5
+  stealth: 7
+  armorClass: 3
+  fort: 2
+  refx: 4
+  will: 3
+  attacks: 2
+  attacksAreSpells: 0
+  abilitySaveDC: 7
+  canAffectsSaves: 0
+  globalDefenseBoost: 0

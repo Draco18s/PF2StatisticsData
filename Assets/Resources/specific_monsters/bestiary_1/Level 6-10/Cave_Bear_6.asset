@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 103b5c95877788a4f9a03245b668ea29, type: 3}
+  m_Name: Cave_Bear_6
+  m_EditorClassIdentifier: 
+  name: Cave Bear
+  level: 6
+  weight: 1
+  perception: 3
+  stealth: 7
+  armorClass: 2
+  fort: 2
+  refx: 4
+  will: 3
+  attacks: 3
+  attacksAreSpells: 0
+  abilitySaveDC: 0
+  canAffectsSaves: 0
+  globalDefenseBoost: 0

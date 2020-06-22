@@ -85,6 +85,7 @@
     <Compile Include="Assets\Scripts\UI\RollResult.cs" />
     <Compile Include="Assets\Scripts\UI\SelectObject.cs" />
     <Compile Include="Assets\Scripts\UI\StatisticsResults.cs" />
+    <Compile Include="Assets\Scripts\UI\ToggleDropdown.cs" />
     <Compile Include="Assets\Scripts\UI\TooltipTrigger.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/Major/Documents/GitHub/PF2Data/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
