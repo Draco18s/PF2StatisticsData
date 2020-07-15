@@ -10,19 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 103b5c95877788a4f9a03245b668ea29, type: 3}
-  m_Name: Gnoll_Cultist_3
+  m_Name: Drow_Fighter_1
   m_EditorClassIdentifier: 
-  name: Gnoll Cultist
-  level: 3
+  name: Drow Fighter
+  level: 1
   weight: 1
   perception: 3
   stealth: 2
-  armorClass: 2
+  armorClass: 1
   fort: 3
-  refx: 4
-  will: 3
-  attacks: 3
+  refx: 2
+  will: 4
+  attacks: 2
   attacksAreSpells: 0
   abilitySaveDC: 2
-  canAffectsSaves: 4
-  globalDefenseBoost: 0
+  canAffectsSaves: 1
+  globalDefenseBoost: 32768
